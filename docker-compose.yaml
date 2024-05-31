@@ -7,3 +7,4 @@ services:
       - "8501:8501"
     volumes:
       - .:/app
+    command: bash -c "streamlit run main.py"
