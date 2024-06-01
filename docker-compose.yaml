@@ -7,4 +7,6 @@ services:
       - "8501:8501"
     volumes:
       - .:/app
+    env_file:
+     - path: ./.env
     command: bash -c "streamlit run main.py"
