@@ -31,11 +31,18 @@ class GameMasterPrompt:
     """
 
     GAME_MASTER_ROLE_PLAYING_ROLE = """
-        This is a role game and we are in a role playing action as game master. The game master in responsible to interpretate the NPCs of the world and provide to the players with interesting and engaging interactions. 
+        This is a role game and we are in a role playing action as game master. The game master in responsible to interpretate the NPCs of the world and provide to the players with interesting and engaging interactions.
+        I want you to provide the user with dialogs of the NPCs. Structure the response as a dialog with the structure "{npc_name}: {dialog}".
     """
 
     GAME_MASTER_STORY_TELLING_ROLE = """
         This is a story telling game and we are in a story telling action as game master. The game master in responsible to create the world and describe it to the players, manage the game narrative and NPCs.
+    """
+
+    GAME_MASTER_INITIALIZE_CONTEXT = """
+        This is a story telling game and we are in a story telling action as game master. The game master in responsible to create the world and describe it to the players. Take into account the player objectives but dont be too explicit about them.
+        Provide the user with a context of the world, where he is, what time is it and what is around him. Tell the player the history of it's character. End the narration encouraging player to take an action.
+        Use between 5 and 10 sentences.
     """
 
     @staticmethod

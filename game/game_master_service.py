@@ -39,7 +39,8 @@ class GameMasterService:
 
     def start_game(self, game_definition: GameDefinition) -> GameMasterResponse:
         self.game_definition = game_definition
-        return GameMasterResponse("Welcome Message", [], GameState("Game Started", "start"))
+        initial_context = self.__initialize_game_context()
+        return GameMasterResponse(initial_context, [], GameState(initial_context, "start"))
 
     def perform_action(self, action: str, relevant_characters: [Character], state: GameState,
                        game_definition: GameDefinition, summaries: [str]) -> GameMasterResponse:
@@ -141,3 +142,26 @@ class GameMasterService:
             messages=messages,
         )
         return response
+
+    def __initialize_game_context(self) -> str:
+        print("[GAME_MASTER_SERVICE] Executing initialize game")
+        client = OpenAI()
+        messages = [
+            {
+                "role": "system",
+                "content": f"{GameMasterPrompt.GAME_MASTER_INITIALIZE_CONTEXT}"
+                           f"{GameMasterPrompt.GAME_MECHANICS}"
+                           f"{GameMasterPrompt.theme(self.game_definition.theme())}"
+                           f"{GameMasterPrompt.year(self.game_definition.year())}"
+                           f"{GameMasterPrompt.objectives(self.game_definition.objectives())}"
+                           f"{GameMasterPrompt.additional_info(self.game_definition.additional_info())}"
+                           f"{GameMasterPrompt.character_definition(self.game_definition.character_definition())}."
+            },
+        ]
+        response = client.chat.completions.create(
+            model="gpt-3.5-turbo",
+            messages=messages,
+        )
+
+        return response.choices[0].message.content
+# Path: models/game_master_response.py
