@@ -43,11 +43,12 @@ class GameMasterService:
 
     def perform_action(self, action: str, relevant_characters: [Character], state: GameState,
                        game_definition: GameDefinition, summaries: [str]) -> GameMasterResponse:
-        result = self.call_llm(action, "\n".join(summaries))
+        result = self.call_llm(action, game_definition, "\n".join(summaries), relevant_characters)
 
         return GameMasterResponse(result, [], GameState(result, "Action"))
 
-    def call_llm(self, prompt: str, summary: str) -> str:
+    def call_llm(self, prompt: str, game_definition: GameDefinition, summary: str,
+                 relevant_characters: [Character]) -> str:
         # This is effectively telling ChatGPT what we're going to use its JSON output for.
         client = OpenAI()
         # The request to the ChatGPT API.

@@ -29,3 +29,10 @@ class GameDefinition:
 
     def additional_info(self) -> str:
         return self._additionalInfo
+
+    def clear(self):
+        self._characterDefinition = ""
+        self._year = ""
+        self._theme = ""
+        self._objective = ""
+        self._additionalInfo = ""
