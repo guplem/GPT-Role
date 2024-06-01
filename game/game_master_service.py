@@ -174,7 +174,7 @@ class GameMasterService:
         messages = [
             {
                 "role": "system",
-                "content": "You are bot in charge of updating a list of dictionaries with new information. You always receive a list of dictionaries with characters and you have to update them based on new information. You can only answer with the list of characters. It is possible that some parts of the json need to be updated while keeping meaningful information."
+                "content": "You are bot in charge of updating a list of dictionaries with new information. You always receive a list of dictionaries with characters and you have to update them based on new information. You can only answer with the list of characters. It is possible that some parts of the json need to be updated while keeping meaningful information. If it appears a character that is not in the list it needs to be created considering the following attributes: {name:str, description:str, location:str, inventory:[str]}"
             },
             {"role": "user",
                 "content": f"This is my list of characters: {characters}\nThis is the new information: {answer}"},
