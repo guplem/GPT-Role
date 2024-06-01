@@ -16,4 +16,6 @@ def game_state():
     st.text_input("Action", value=action, key="action")
     def on_submit():
         GameManager().perform_action(st.session_state.action)
+        st.session_state.action = ""
+
     st.button("Perform Action", on_click=on_submit)
