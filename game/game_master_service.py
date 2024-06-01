@@ -43,12 +43,12 @@ class GameMasterService:
 
     def perform_action(self, action:str, relevant_characters:[Character], state:GameState, game_definition:GameDefinition, summaries:[str]) -> GameMasterResponse:
 
-        result = self.call_llm(action, "\n".join(summaries))
+        result = self.call_llm(action, game_definition, "\n".join(summaries), relevant_characters)
 
         return GameMasterResponse(result, [], GameState(result, "Action"))
 
 
-    def call_llm(self, prompt:str, summary:str) -> str:
+    def call_llm(self, prompt:str, game_definition:GameDefinition, summary:str, relevant_characters:[Character]) -> str:
         # This is effectively telling ChatGPT what we're going to use its JSON output for.
         client = OpenAI()
         # The request to the ChatGPT API.
@@ -56,7 +56,7 @@ class GameMasterService:
             model="gpt-3.5-turbo",
             messages=[
                 {"role": "system",
-                 "content": f"{GameMasterPrompt.DECIDE_ACTION_BOT_ROLE} {GameMasterPrompt.GAME_MECHANICS}\n{GameMasterPrompt.WORLD_INFO}. {GameMasterPrompt.CHARACTER_INFO}."},
+                 "content": f"{GameMasterPrompt.DECIDE_ACTION_BOT_ROLE} {GameMasterPrompt.GAME_MECHANICS}\n{game_definition.theme} {game_definition.objective}. {game_definition.characterDefinition} {game_definition.additionalInfo}."},
                 {"role": "user", "content": f"{prompt}"}
             ],
             tools=self.TOOLS,
@@ -67,13 +67,13 @@ class GameMasterService:
         return response2.choices[0].message.content
 
     @staticmethod
-    def conflict(prompt:str, summary:str) -> ChatCompletion:
+    def conflict(prompt:str, game_definition:GameDefinition, summary:str, relevant_characters:[Character]) -> ChatCompletion:
         dice = random.randint(1, 20)
         print("[GAME_MASTER_SERVICE] Executing conflict", dice)
         client = OpenAI()
         messages = [
             {"role": "system",
-             "content": f"{GameMasterPrompt.GAME_MASTER_CONFLICT_ROLE} {GameMasterPrompt.GAME_MECHANICS}\n{GameMasterPrompt.WORLD_INFO}. {GameMasterPrompt.CHARACTER_INFO}."},
+             "content": f"{GameMasterPrompt.GAME_MASTER_CONFLICT_ROLE} {GameMasterPrompt.GAME_MECHANICS}\n{game_definition.theme} {game_definition.objective}. {game_definition.characterDefinition} {game_definition.additionalInfo}."},
             {"role": "assistant",
             "content": f"In this world, the things that have happened before are:\n{summary}"},
             {"role": "user",
@@ -85,12 +85,12 @@ class GameMasterService:
         return response
 
     @staticmethod
-    def role_playing(prompt:str, summary:str) -> ChatCompletion:
+    def role_playing(prompt:str, game_definition:GameDefinition, summary:str, relevant_characters:[Character]) -> ChatCompletion:
         print("[GAME_MASTER_SERVICE] Executing role play")
         client = OpenAI()
         messages = [
             {"role": "system",
-             "content": f"{GameMasterPrompt.GAME_MASTER_CONFLICT_ROLE} {GameMasterPrompt.GAME_MECHANICS}\n{GameMasterPrompt.WORLD_INFO}. {GameMasterPrompt.CHARACTER_INFO}."},
+             "content": f"{GameMasterPrompt.GAME_MASTER_CONFLICT_ROLE} {GameMasterPrompt.GAME_MECHANICS}\n{game_definition.theme} {game_definition.objective}. {game_definition.characterDefinition} {game_definition.additionalInfo}."},
             {"role": "assistant",
              "content": f"In this world, the things that have happened before are:\n{summary}"},
             {"role": "user",
@@ -102,12 +102,12 @@ class GameMasterService:
         return response
 
     @staticmethod
-    def story_telling(prompt:str, summary:str) -> ChatCompletion:
+    def story_telling(prompt:str, game_definition:GameDefinition, summary:str, relevant_characters:[Character]) -> ChatCompletion:
         print("[GAME_MASTER_SERVICE] Executing story telling")
         client = OpenAI()
         messages = [
             {"role": "system",
-             "content": f"{GameMasterPrompt.GAME_MASTER_CONFLICT_ROLE} {GameMasterPrompt.GAME_MECHANICS}\n{GameMasterPrompt.WORLD_INFO}. {GameMasterPrompt.CHARACTER_INFO}."},
+             "content": f"{GameMasterPrompt.GAME_MASTER_CONFLICT_ROLE} {GameMasterPrompt.GAME_MECHANICS}\n{game_definition.theme} {game_definition.objective}. {game_definition.characterDefinition} {game_definition.additionalInfo}."},
             {"role": "assistant",
              "content": f"In this world, the things that have happened before are:\n{summary}"},
             {"role": "user",
