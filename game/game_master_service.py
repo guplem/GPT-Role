@@ -77,7 +77,7 @@ class GameMasterService:
             {"role": "assistant",
             "content": f"In this world, the things that have happened before are:\n{summary}"},
             {"role": "user",
-             "content": f"{prompt}\nI rolled a d20 dice and I got this number: {dice} \nHow does the story continue?"}]
+             "content": f"{prompt}\nI rolled a d20 dice and I got this number: {dice} \nUsing less than 3 sentences, how does the story continue?"}]
         response = client.chat.completions.create(
             model="gpt-3.5-turbo",
             messages=messages,
@@ -94,7 +94,7 @@ class GameMasterService:
             {"role": "assistant",
              "content": f"In this world, the things that have happened before are:\n{summary}"},
             {"role": "user",
-             "content": f"{prompt}\nHow does the story continue?"}]
+             "content": f"{prompt}\nUsing less than 3 sentences, how does the story continue?"}]
         response = client.chat.completions.create(
             model="gpt-3.5-turbo",
             messages=messages,
@@ -111,7 +111,7 @@ class GameMasterService:
             {"role": "assistant",
              "content": f"In this world, the things that have happened before are:\n{summary}"},
             {"role": "user",
-             "content": f"{prompt}\nHow does the story continue?"}]
+             "content": f"{prompt}\nUsing less than 3 sentences, how does the story continue?"}]
         response = client.chat.completions.create(
             model="gpt-3.5-turbo",
             messages=messages,
