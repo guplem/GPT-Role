@@ -23,7 +23,7 @@ st.divider()
 
 key = st.text_input("OpenAI API key", value=DataService().API_KEY, type="password")
 
-if len(key) == 0 or key == "" or key is None:
+if key is None or len(key) == 0 or key == "":
     st.warning("Please provide an OpenAI API key to start the game.")
     st.stop()
 
