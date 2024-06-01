@@ -9,7 +9,12 @@ if st.button("Rebuild Page"):
 st.divider()
 st.write("Setup Done: ", GameManager().is_game_started())
 
-def print_game_definition():
-    print(f"Current Game Definition: {DataService().gameDefinition.__str__()}")
+st.title("Game Definition")
+st.write(DataService().gameDefinition.__str__())
 
-st.write("Game Definition: ", DataService().gameDefinition.__str__())
+st.title("Current State")
+st.write(DataService().state.__str__())
+
+st.title("Characters")
+for character in DataService().characters:
+    st.write(character.__str__())
