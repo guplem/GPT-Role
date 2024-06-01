@@ -1,13 +1,13 @@
 import openai
+from openai import OpenAI
 
-# Function to call the OpenAI API
-def call(prompt, api_key):
-    openai.api_key = api_key
-    response = openai.Completion.create(
-        engine="gpt-3.5-turbo",  # Use the appropriate model
-        prompt=prompt,
-        max_tokens=2000,
-        stop=None,
-        temperature=0.7,
+def call(context, prompt, api_key):
+    client = OpenAI(api_key=api_key)
+    completion = client.chat.completions.create(
+        model="gpt-3.5-turbo",
+        messages=[
+            {"role": "system", "content": f"You are a Dungeon Master, {context}"},
+            {"role": "user", "content": prompt}
+        ]
     )
-    return response.choices[0].text.strip()
+    return completion.choices[0].message.content
