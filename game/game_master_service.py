@@ -5,6 +5,8 @@ from openai.types.chat import ChatCompletion
 
 from data.data_service import DataService
 from game.game_master_prompt import GameMasterPrompt
+from models.character import Character
+from models.game_definition import GameDefinition
 from models.game_master_response import GameMasterResponse
 from models.state import GameState
 
@@ -35,9 +37,14 @@ class GameMasterService:
             cls._instance = super(GameMasterService, cls).__new__(cls)
         return cls._instance
 
-    def start_game(self, game_definition) -> GameMasterResponse:
+    def start_game(self, game_definition:GameDefinition) -> GameMasterResponse:
         # TODO: Implement the start_game method
         return GameMasterResponse("Welcome Message", [], GameState("Game Started", "start"))
+
+    def perform_action(self, action:str, relevant_characters:[Character], state:GameState, game_definition:GameDefinition, summaries:[str]) -> GameMasterResponse:
+        # TODO: Implement the method
+        return GameMasterResponse("Action Performed", [], GameState("Action Performed", "Action"))
+
 
     def call_llm(self, prompt) -> None:
         # This is effectively telling ChatGPT what we're going to use its JSON output for.

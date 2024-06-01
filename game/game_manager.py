@@ -33,7 +33,7 @@ class GameManager (metaclass=Singleton):
     def perform_action(action: str) -> None:
         print ("Performing action: " + action)
         relevant_characters:[Character] = GameManager().get_characters_in_current_location()
-        response:GameMasterResponse = GameMasterService().perform_action(action, relevant_characters, DataService().state, DataService().gameDefinition, DataService().characters)
+        response:GameMasterResponse = GameMasterService().perform_action(action, relevant_characters, DataService().state, DataService().gameDefinition, DataService().summaries)
 
         DataService().state = response.newState
         DataService().update_characters(response.charactersUpdates)
