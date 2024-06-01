@@ -166,7 +166,7 @@ class GameMasterService:
 
         return response.choices[0].message.content
     
-    def update_characters(answer, characters: [Character]) -> ChatCompletion:
+    def update_characters(self, answer, characters: [Character]) -> ChatCompletion:
         print("[GAME_MASTER_SERVICE] Updating characters")
         # Use chat gpt to see if a character from the list should be updated because of the action in the answer
         client = OpenAI()
