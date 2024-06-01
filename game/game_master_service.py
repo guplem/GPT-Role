@@ -43,12 +43,12 @@ class GameMasterService:
 
     def perform_action(self, action:str, relevant_characters:[Character], state:GameState, game_definition:GameDefinition, summaries:[str]) -> GameMasterResponse:
 
-        result = self.call_llm(action)
+        result = self.call_llm(action, "\n".join(summaries))
 
         return GameMasterResponse(result, [], GameState(result, "Action"))
 
 
-    def call_llm(self, prompt) -> str:
+    def call_llm(self, prompt:str, summary:str) -> str:
         # This is effectively telling ChatGPT what we're going to use its JSON output for.
         client = OpenAI()
         # The request to the ChatGPT API.
@@ -63,17 +63,19 @@ class GameMasterService:
             tool_choice="required"
         )
 
-        response2 = getattr(self, response.choices[0].message.tool_calls[0].function.name)(prompt)
+        response2 = getattr(self, response.choices[0].message.tool_calls[0].function.name)(prompt, summary)
         return response2.choices[0].message.content
 
     @staticmethod
-    def conflict(prompt) -> ChatCompletion:
+    def conflict(prompt:str, summary:str) -> ChatCompletion:
         dice = random.randint(1, 20)
         print("[GAME_MASTER_SERVICE] Executing conflict", dice)
         client = OpenAI()
         messages = [
             {"role": "system",
              "content": f"{GameMasterPrompt.GAME_MASTER_CONFLICT_ROLE} {GameMasterPrompt.GAME_MECHANICS}\n{GameMasterPrompt.WORLD_INFO}. {GameMasterPrompt.CHARACTER_INFO}."},
+            {"role": "assistant",
+            "content": f"In this world, the things that have happened before are:\n{summary}"},
             {"role": "user",
              "content": f"{prompt}\nI rolled a d20 dice and I got this number: {dice} \nHow does the story continue?"}]
         response = client.chat.completions.create(
@@ -83,12 +85,14 @@ class GameMasterService:
         return response
 
     @staticmethod
-    def role_playing(prompt) -> ChatCompletion:
+    def role_playing(prompt:str, summary:str) -> ChatCompletion:
         print("[GAME_MASTER_SERVICE] Executing role play")
         client = OpenAI()
         messages = [
             {"role": "system",
              "content": f"{GameMasterPrompt.GAME_MASTER_CONFLICT_ROLE} {GameMasterPrompt.GAME_MECHANICS}\n{GameMasterPrompt.WORLD_INFO}. {GameMasterPrompt.CHARACTER_INFO}."},
+            {"role": "assistant",
+             "content": f"In this world, the things that have happened before are:\n{summary}"},
             {"role": "user",
              "content": f"{prompt}\nHow does the story continue?"}]
         response = client.chat.completions.create(
@@ -98,12 +102,14 @@ class GameMasterService:
         return response
 
     @staticmethod
-    def story_telling(prompt) -> ChatCompletion:
+    def story_telling(prompt:str, summary:str) -> ChatCompletion:
         print("[GAME_MASTER_SERVICE] Executing story telling")
         client = OpenAI()
         messages = [
             {"role": "system",
              "content": f"{GameMasterPrompt.GAME_MASTER_CONFLICT_ROLE} {GameMasterPrompt.GAME_MECHANICS}\n{GameMasterPrompt.WORLD_INFO}. {GameMasterPrompt.CHARACTER_INFO}."},
+            {"role": "assistant",
+             "content": f"In this world, the things that have happened before are:\n{summary}"},
             {"role": "user",
              "content": f"{prompt}\nHow does the story continue?"}]
         response = client.chat.completions.create(
