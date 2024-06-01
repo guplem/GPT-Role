@@ -9,11 +9,12 @@ from models.character import Character
 from models.game_definition import GameDefinition
 from models.game_master_response import GameMasterResponse
 from models.state import GameState
+from utils.singleton import Singleton
 
 model = "gpt-3.5-turbo"
 
 
-class GameMasterService:
+class GameMasterService(metaclass=Singleton):
     TOOLS = [
         {"type": "function",
          "function": {
@@ -40,11 +41,6 @@ class GameMasterService:
     game_definition: GameDefinition
     client: OpenAI
     _instance = None
-
-    def __new__(cls, *args, **kwargs):
-        if cls._instance is None:
-            cls._instance = super(GameMasterService, cls).__new__(cls)
-        return cls._instance
 
     def start_game(self, game_definition: GameDefinition) -> GameMasterResponse:
         print(DataService().API_KEY)

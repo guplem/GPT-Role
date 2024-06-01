@@ -5,13 +5,13 @@ import streamlit as st
 class Singleton(type):
     instances = {}
     def __call__(cls, *args, **kwargs):
-        obj = st.session_state.get(cls, None)
-        if obj is None:
+        object_in_state = st.session_state.get(cls, None)
+        if object_in_state is None:
             st.session_state[cls] = cls
 
         instances = []
-        if obj is not None:
-            instances = obj.instances
+        if object_in_state is not None:
+            instances = object_in_state.instances
 
         if cls not in instances:
             st.session_state[cls].instances[cls] = super(Singleton, cls).__call__(*args, **kwargs)
