@@ -21,9 +21,9 @@ class GameManager (metaclass=Singleton):
 
         response:GameMasterResponse = GameMasterService().start_game(game_definition)
 
-        DataService().state = response.newState
-        DataService().update_characters(response.charactersUpdates)
-        DataService().save_summary(response.summary)
+        DataService().state = response.new_state()
+        DataService().update_characters(response.characters_updates())
+        DataService().save_summary(response.summary())
 
     @staticmethod
     def get_current_state() -> GameState:
@@ -35,10 +35,10 @@ class GameManager (metaclass=Singleton):
         relevant_characters:[Character] = GameManager().get_characters_in_current_location()
         response:GameMasterResponse = GameMasterService().perform_action(action, relevant_characters, DataService().state, DataService().gameDefinition, DataService().summaries)
 
-        DataService().state = response.newState
-        DataService().update_characters(response.charactersUpdates)
-        DataService().save_summary(response.summary)
+        DataService().state = response.new_state()
+        DataService().update_characters(response.characters_updates())
+        DataService().save_summary(response.summary())
 
     @staticmethod
     def get_characters_in_current_location() -> [Character]:
-        return DataService().get_characters_of_location(DataService().state.location)
+        return DataService().get_characters_of_location(DataService().state.location())

@@ -9,10 +9,10 @@ class GameDefinition:
     def __str__(self):
         return f"""
         Character definition: {self._character_definition}
-        Year: {self._year}
-        Theme: {self._theme}
-        Objective: {self._objective}
-        AdditionalInfo: {self._additionalInfo}
+        \nYear: {self._year}
+        \nTheme: {self._theme}
+        \nObjective: {self._objective}
+        \nAdditionalInfo: {self._additionalInfo}
         """
 
     def character_definition(self) -> str:
@@ -29,3 +29,12 @@ class GameDefinition:
 
     def additional_info(self) -> str:
         return self._additionalInfo
+
+    def to_json(self):
+        return {
+            "characterDefinition": self._character_definition,
+            "year": self._year,
+            "theme": self._theme,
+            "objective": self._objective,
+            "additionalInfo": self._additionalInfo
+        }

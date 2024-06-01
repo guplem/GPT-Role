@@ -1,4 +1,3 @@
-import openai
 from openai import OpenAI
 
 def call(world_info, summaries, context, prompt, api_key):

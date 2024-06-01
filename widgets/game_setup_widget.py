@@ -1,5 +1,4 @@
 import streamlit as st
-import random
 
 from data.data_service import DataService
 from game.game_manager import GameManager
