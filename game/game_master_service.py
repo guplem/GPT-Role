@@ -1,16 +1,35 @@
-from openai import OpenAI
 import random
 
-from models.game_master_response import GameMasterResponse
+from openai import OpenAI
+from openai.types.chat import ChatCompletion
+
 from data.data_service import DataService
+from game.game_master_prompt import GameMasterPrompt
+from models.game_master_response import GameMasterResponse
 from models.state import GameState
-from utils.singleton import Singleton
-from game.game_master_utils import game_master_setup as prompts
 
 
-class GameMasterService(metaclass=Singleton):
+class GameMasterService:
+    TOOLS = [
+        {"type": "function",
+         "function": {
+             "name": "conflict",
+             "description": GameMasterPrompt.CONFLICT
+         }},
+        {"type": "function",
+         "function": {
+             "name": "role_playing",
+             "description": GameMasterPrompt.ROLE_PLAYING
+         }},
+        {"type": "function",
+         "function": {
+             "name": "story_telling",
+             "description": GameMasterPrompt.STORY_TELLING
+         }},
+    ]
 
     _instance = None
+
     def __new__(cls, *args, **kwargs):
         if cls._instance is None:
             cls._instance = super(GameMasterService, cls).__new__(cls)
@@ -22,45 +41,67 @@ class GameMasterService(metaclass=Singleton):
 
     def call_llm(self, prompt) -> None:
         # This is effectively telling ChatGPT what we're going to use its JSON output for.
-        game_mecanics = prompts.game_mecanics
-        # world_info = DataService().gameDefinition.theme + DataService().gameDefinition.objective
-        world_info = "You are in a fantasy world called Aerthoria, a land of magic and mystery. The world is populated by dwarfs, elves, humans, and orcs. The capital city is Eldoria, a bustling metropolis where adventurers gather to seek quests and treasures. The world is threatened by an ancient evil known as the Shadow King, who seeks to plunge Aerthoria into eternal darkness."
-        character_info = DataService().gameDefinition.characterDefinition + DataService().gameDefinition.additionalInfo
-        # character_info = "The player is Aeric a farmer that works for the local lord. He is a skilled archer and has a loyal dog named Bran. Aeric is on a quest to find the lost sword of King Aldric, a legendary weapon that can defeat the Shadow King."
-        tools = prompts.tools
-        
         client = OpenAI()
         # The request to the ChatGPT API.
         response = client.chat.completions.create(
-            model = "gpt-3.5-turbo",
-            messages = [
-                {"role": "system", "content": f"{prompts.pick_function} {game_mecanics}\n{world_info}. {character_info}."},
+            model="gpt-3.5-turbo",
+            messages=[
+                {"role": "system",
+                 "content": f"{GameMasterPrompt.DECIDE_ACTION_BOT_ROLE} {GameMasterPrompt.GAME_MECHANICS}\n{GameMasterPrompt.WORLD_INFO}. {GameMasterPrompt.CHARACTER_INFO}."},
                 {"role": "user", "content": f"{prompt}"}
             ],
-            tools = tools,
+            tools=self.TOOLS,
             tool_choice="required"
         )
 
-        def conflict():
-            dice = random.randint(1, 20)
-            messages = [
-                {"role": "system", "content": f"{prompts.conflict} {game_mecanics}\n{world_info}. {character_info}."},
-                {"role": "user", "content": f"{prompt}\nI rolled a d20 dice and I got this number: {dice} \nHow does the story continue?"}]
-            response = client.chat.completions.create(
-                model = "gpt-3.5-turbo",
-                messages = messages,
-            )
-            return response, dice
-        def role_playing():
-            dice = random.randint(1, 20)
-            print("Hosla roleplaying", dice)
-            return response
-        def story_telling():
-            dice = random.randint(1, 20)
-            print("storypoling", dice)
-            return response
-        
-        response2, dice =globals().get(response.choices[0].message.tool_calls[0].function.name)()
+        response2 = getattr(self, response.choices[0].message.tool_calls[0].function.name)(prompt)
         return response2.choices[0].message.content
-    def is_game_started(self)-> bool:
+
+    def is_game_started(self) -> bool:
         return DataService().is_game_started()
+
+    @staticmethod
+    def conflict(prompt) -> ChatCompletion:
+        dice = random.randint(1, 20)
+        print("[GAME_MASTER_SERVICE] Executing conflict", dice)
+        client = OpenAI()
+        messages = [
+            {"role": "system",
+             "content": f"{GameMasterPrompt.GAME_MASTER_CONFLICT_ROLE} {GameMasterPrompt.GAME_MECHANICS}\n{GameMasterPrompt.WORLD_INFO}. {GameMasterPrompt.CHARACTER_INFO}."},
+            {"role": "user",
+             "content": f"{prompt}\nI rolled a d20 dice and I got this number: {dice} \nHow does the story continue?"}]
+        response = client.chat.completions.create(
+            model="gpt-3.5-turbo",
+            messages=messages,
+        )
+        return response
+
+    @staticmethod
+    def role_playing(prompt) -> ChatCompletion:
+        print("[GAME_MASTER_SERVICE] Executing role play")
+        client = OpenAI()
+        messages = [
+            {"role": "system",
+             "content": f"{GameMasterPrompt.GAME_MASTER_CONFLICT_ROLE} {GameMasterPrompt.GAME_MECHANICS}\n{GameMasterPrompt.WORLD_INFO}. {GameMasterPrompt.CHARACTER_INFO}."},
+            {"role": "user",
+             "content": f"{prompt}\nHow does the story continue?"}]
+        response = client.chat.completions.create(
+            model="gpt-3.5-turbo",
+            messages=messages,
+        )
+        return response
+
+    @staticmethod
+    def story_telling(prompt) -> ChatCompletion:
+        print("[GAME_MASTER_SERVICE] Executing story telling")
+        client = OpenAI()
+        messages = [
+            {"role": "system",
+             "content": f"{GameMasterPrompt.GAME_MASTER_CONFLICT_ROLE} {GameMasterPrompt.GAME_MECHANICS}\n{GameMasterPrompt.WORLD_INFO}. {GameMasterPrompt.CHARACTER_INFO}."},
+            {"role": "user",
+             "content": f"{prompt}\nHow does the story continue?"}]
+        response = client.chat.completions.create(
+            model="gpt-3.5-turbo",
+            messages=messages,
+        )
+        return response
