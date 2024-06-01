@@ -45,8 +45,9 @@ class GameMasterService:
     def perform_action(self, action: str, relevant_characters: [Character], state: GameState,
                        game_definition: GameDefinition, summaries: [str]) -> GameMasterResponse:
         result = self.call_llm(action, game_definition, "\n".join(summaries), relevant_characters)
-
-        return GameMasterResponse(result, [], GameState(result, "Action"))
+        if relevant_characters is not None:
+            relevant_characters = self.update_characters(result, relevant_characters)
+        return GameMasterResponse(result, relevant_characters, GameState(result, "Action"))
 
     def call_llm(self, prompt: str, game_definition: GameDefinition, summary: str,
                  relevant_characters: [Character]) -> str:
@@ -164,4 +165,23 @@ class GameMasterService:
         )
 
         return response.choices[0].message.content
+    
+    def update_characters(answer, characters: [Character]) -> ChatCompletion:
+        print("[GAME_MASTER_SERVICE] Updating characters")
+        # Use chat gpt to see if a character from the list should be updated because of the action in the answer
+        client = OpenAI()
+        characters = [character.__dict__ for character in characters]
+        messages = [
+            {
+                "role": "system",
+                "content": "You are bot in charge of updating a list of dictionaries with new information. You always receive a list of dictionaries with characters and you have to update them based on new information. You can only answer with the list of characters. It is possible that some parts of the json need to be updated while keeping meaningful information."
+            },
+            {"role": "user",
+                "content": f"This is my list of characters: {characters}\nThis is the new information: {answer}"},
+        ]
+        response = client.chat.completions.create(
+            model="gpt-3.5-turbo",
+            messages=messages,
+        )
+        return [Character(**character) for character in eval(response.choices[0].message.content)]
 # Path: models/game_master_response.py
