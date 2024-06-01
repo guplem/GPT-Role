@@ -48,15 +48,16 @@ class GameMasterService:
             tool_choice="required"
         )
 
-        response2, dice = getattr(self, response.choices[0].message.tool_calls[0].function.name)(prompt)
+        response2 = getattr(self, response.choices[0].message.tool_calls[0].function.name)(prompt)
         return response2.choices[0].message.content
 
     def is_game_started(self) -> bool:
         return DataService().is_game_started()
 
     @staticmethod
-    def conflict(prompt) -> tuple[ChatCompletion, int]:
+    def conflict(prompt) -> ChatCompletion:
         dice = random.randint(1, 20)
+        print("[GAME_MASTER_SERVICE] Executing conflict", dice)
         client = OpenAI()
         messages = [
             {"role": "system",
@@ -67,14 +68,34 @@ class GameMasterService:
             model="gpt-3.5-turbo",
             messages=messages,
         )
-        return response, dice
+        return response
 
     @staticmethod
-    def role_playing(prompt) -> tuple[ChatCompletion, int]:
-        print("Hosla roleplaying")
-        return "", 0
+    def role_playing(prompt) -> ChatCompletion:
+        print("[GAME_MASTER_SERVICE] Executing role play")
+        client = OpenAI()
+        messages = [
+            {"role": "system",
+             "content": f"{GameMasterPrompt.GAME_MASTER_CONFLICT_ROLE} {GameMasterPrompt.GAME_MECHANICS}\n{GameMasterPrompt.WORLD_INFO}. {GameMasterPrompt.CHARACTER_INFO}."},
+            {"role": "user",
+             "content": f"{prompt}\nHow does the story continue?"}]
+        response = client.chat.completions.create(
+            model="gpt-3.5-turbo",
+            messages=messages,
+        )
+        return response
 
     @staticmethod
-    def story_telling(prompt) -> tuple[ChatCompletion, int]:
-        print("storypoling")
-        return "", 0
+    def story_telling(prompt) -> ChatCompletion:
+        print("[GAME_MASTER_SERVICE] Executing story telling")
+        client = OpenAI()
+        messages = [
+            {"role": "system",
+             "content": f"{GameMasterPrompt.GAME_MASTER_CONFLICT_ROLE} {GameMasterPrompt.GAME_MECHANICS}\n{GameMasterPrompt.WORLD_INFO}. {GameMasterPrompt.CHARACTER_INFO}."},
+            {"role": "user",
+             "content": f"{prompt}\nHow does the story continue?"}]
+        response = client.chat.completions.create(
+            model="gpt-3.5-turbo",
+            messages=messages,
+        )
+        return response
