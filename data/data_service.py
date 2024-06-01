@@ -1,5 +1,8 @@
+import os
 import random
 from typing import Optional
+
+from dotenv import load_dotenv
 
 from data.compression_service import CompressionService
 from models.character import Character
@@ -15,6 +18,8 @@ class DataService(metaclass=Singleton):
         self.state:GameState = GameState("Welcome to the game", "prologue")
         self.characters:[Character] = []
         self.summaries:[str] = []
+        load_dotenv()
+        self.API_KEY = os.getenv("OPENAI_API_KEY")
 
     def update_characters(self, characters_updates:[Character]) -> None:
         # Replace all characters with the same name with the new ones

@@ -3,6 +3,11 @@ class GameMasterPrompt:
         Players try to perform an action. Some kind of actions can be explore, combat, try to influence an NPC, look for clues or secrets, etc.
     """
 
+    TRIVIAL_ACTION = """
+        Players perform an action that is easy to accomplish. The current character has the necessary skills and tools to perform the action without problems.
+    """
+
+
     ROLE_PLAYING = """
         Players interact with NPCs and other characters and have conversation with them.
     """
@@ -45,7 +50,13 @@ class GameMasterPrompt:
         Provide the user with a context of the world, where he is, what time is it and what is around him. Tell the player the history of it's character. End the narration encouraging player to take an action. 
         Place the player into a specific scene (with more characters if needed) and set up the scene for the player to take an action.
         Allways ask player what he wants to do next.
-        Use between 5 and 10 sentences.
+        Use between 5 or 6 sentences.
+    """
+
+    GAME_MASTER_TRIVIAL_ACTION_ROLE = """
+        This is a role game and you are the game master. The game master in responsible to explain the result of the action to the player.
+        The action is trivial and the player has the necessary skills and tools to perform the action without problems. Allways succeed.
+        Respond to the action with a short description of the result of the action and ask the user what he wants to do next.
     """
 
     @staticmethod

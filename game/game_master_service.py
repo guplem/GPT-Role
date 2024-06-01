@@ -3,6 +3,7 @@ import random
 from openai import OpenAI
 from openai.types.chat import ChatCompletion
 
+from data.data_service import DataService
 from game.game_master_prompt import GameMasterPrompt
 from models.character import Character
 from models.game_definition import GameDefinition
@@ -11,12 +12,18 @@ from models.state import GameState
 
 model = "gpt-3.5-turbo"
 
+
 class GameMasterService:
     TOOLS = [
         {"type": "function",
          "function": {
              "name": "conflict",
              "description": GameMasterPrompt.CONFLICT
+         }},
+        {"type": "function",
+         "function": {
+             "name": "trivial_action",
+             "description": GameMasterPrompt.TRIVIAL_ACTION
          }},
         {"type": "function",
          "function": {
@@ -31,6 +38,7 @@ class GameMasterService:
     ]
 
     game_definition: GameDefinition
+    client: OpenAI
     _instance = None
 
     def __new__(cls, *args, **kwargs):
@@ -39,6 +47,8 @@ class GameMasterService:
         return cls._instance
 
     def start_game(self, game_definition: GameDefinition) -> GameMasterResponse:
+        print(DataService().API_KEY)
+        self.client = OpenAI(api_key=DataService().API_KEY)
         self.game_definition = game_definition
         initial_context = self.__initialize_game_context()
         return GameMasterResponse(initial_context, [], GameState(initial_context, "start"))
@@ -53,9 +63,8 @@ class GameMasterService:
     def call_llm(self, prompt: str, game_definition: GameDefinition, summary: str,
                  relevant_characters: [Character]) -> str:
         # This is effectively telling ChatGPT what we're going to use its JSON output for.
-        client = OpenAI()
         # The request to the ChatGPT API.
-        response = client.chat.completions.create(
+        response = self.client.chat.completions.create(
             model="gpt-3.5-turbo",
             messages=[
                 {"role": "system",
@@ -77,7 +86,6 @@ class GameMasterService:
     def conflict(self, prompt: str, summary: str) -> ChatCompletion:
         dice = random.randint(1, 20)
         print("[GAME_MASTER_SERVICE] Executing conflict", dice)
-        client = OpenAI()
         messages = [
             {"role": "system",
              "content": f"{GameMasterPrompt.GAME_MASTER_CONFLICT_ROLE}"
@@ -93,7 +101,30 @@ class GameMasterService:
              "content": f"In this world, the things that have happened before are:\n{summary}"},
             {"role": "user",
              "content": f"{prompt}\nI rolled a d20 dice and I got this number: {dice} \nUsing less than 3 sentences, how does the story continue?"}]
-        response = client.chat.completions.create(
+        response = self.client.chat.completions.create(
+            model=model,
+            messages=messages,
+        )
+        return response
+
+    def trivial_action(self, prompt: str, summary: str) -> ChatCompletion:
+        dice = random.randint(1, 20)
+        print("[GAME_MASTER_SERVICE] Executing conflict", dice)
+        messages = [
+            {"role": "system",
+             "content": f"{GameMasterPrompt.TRIVIAL_ACTION} "
+                        f"{GameMasterPrompt.GAME_MECHANICS}"
+                        f"{GameMasterPrompt.theme(self.game_definition.theme())}"
+                        f"{GameMasterPrompt.year(self.game_definition.year())}"
+                        f"{GameMasterPrompt.objectives(self.game_definition.objectives())}"
+                        f"{GameMasterPrompt.additional_info(self.game_definition.additional_info())}"
+                        f"{GameMasterPrompt.character_definition(self.game_definition.character_definition())}."
+             },
+            {"role": "assistant",
+             "content": f"In this world, the things that have happened before are:\n{summary}"},
+            {"role": "user",
+             "content": f"{prompt}\nUsing less than 3 sentences, how does the story continue?"}]
+        response = self.client.chat.completions.create(
             model=model,
             messages=messages,
         )
@@ -101,7 +132,7 @@ class GameMasterService:
 
     def role_playing(self, prompt: str, summary: str) -> ChatCompletion:
         print("[GAME_MASTER_SERVICE] Executing role play")
-        client = OpenAI()
+
         messages = [
             {"role": "system",
              "content": f"{GameMasterPrompt.GAME_MASTER_ROLE_PLAYING_ROLE}"
@@ -116,7 +147,7 @@ class GameMasterService:
              "content": f"In this world, the things that have happened before are:\n{summary}"},
             {"role": "user",
              "content": f"{prompt}\nUsing less than 3 sentences, how does the story continue?"}]
-        response = client.chat.completions.create(
+        response = self.client.chat.completions.create(
             model=model,
             messages=messages,
         )
@@ -124,7 +155,7 @@ class GameMasterService:
 
     def story_telling(self, prompt: str, summary: str) -> ChatCompletion:
         print("[GAME_MASTER_SERVICE] Executing story telling")
-        client = OpenAI()
+
         messages = [
             {
                 "role": "system",
@@ -140,7 +171,7 @@ class GameMasterService:
              "content": f"In this world, the things that have happened before are:\n{summary}"},
             {"role": "user",
              "content": f"{prompt}\nUsing less than 3 sentences, how does the story continue?"}]
-        response = client.chat.completions.create(
+        response = self.client.chat.completions.create(
             model="gpt-3.5-turbo",
             messages=messages,
         )
@@ -148,7 +179,7 @@ class GameMasterService:
 
     def __initialize_game_context(self) -> str:
         print("[GAME_MASTER_SERVICE] Executing initialize game")
-        client = OpenAI()
+
         messages = [
             {
                 "role": "system",
@@ -161,7 +192,7 @@ class GameMasterService:
                            f"{GameMasterPrompt.character_definition(self.game_definition.character_definition())}."
             },
         ]
-        response = client.chat.completions.create(
+        response = self.client.chat.completions.create(
             model=model,
             messages=messages,
         )
@@ -171,7 +202,7 @@ class GameMasterService:
     def update_characters(self, answer, characters: [Character], location) -> ChatCompletion:
         print("[GAME_MASTER_SERVICE] Updating characters")
         # Use chat gpt to see if a character from the list should be updated because of the action in the answer
-        client = OpenAI()
+
         characters = [character.__dict__ for character in characters]
         messages = [
             {
@@ -186,9 +217,9 @@ class GameMasterService:
                            f"The current location is: {location}."
             },
             {"role": "user",
-                "content": f"This is my list of characters: {characters}\nThis is the new information: {answer}."},
+             "content": f"This is my list of characters: {characters}\nThis is the new information: {answer}."},
         ]
-        response = client.chat.completions.create(
+        response = self.client.chat.completions.create(
             model=model,
             messages=messages,
         )
