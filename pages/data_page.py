@@ -18,3 +18,7 @@ st.write(DataService().state.__str__())
 st.title("Characters")
 for character in DataService().characters:
     st.write(character.__str__())
+
+st.title("Summary")
+for summary in DataService().summaries:
+    st.write(summary)

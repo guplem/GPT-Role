@@ -42,11 +42,13 @@ class GameMasterService:
         return GameMasterResponse("Welcome Message", [], GameState("Game Started", "start"))
 
     def perform_action(self, action:str, relevant_characters:[Character], state:GameState, game_definition:GameDefinition, summaries:[str]) -> GameMasterResponse:
-        # TODO: Implement the method
-        return GameMasterResponse("Action Performed", [], GameState("Action Performed", "Action"))
+
+        result = self.call_llm(action)
+
+        return GameMasterResponse(result, [], GameState(result, "Action"))
 
 
-    def call_llm(self, prompt) -> None:
+    def call_llm(self, prompt) -> str:
         # This is effectively telling ChatGPT what we're going to use its JSON output for.
         client = OpenAI()
         # The request to the ChatGPT API.
@@ -63,9 +65,6 @@ class GameMasterService:
 
         response2 = getattr(self, response.choices[0].message.tool_calls[0].function.name)(prompt)
         return response2.choices[0].message.content
-
-    def is_game_started(self) -> bool:
-        return DataService().is_game_started()
 
     @staticmethod
     def conflict(prompt) -> ChatCompletion:
