@@ -86,3 +86,10 @@ class GameMasterPrompt:
     @staticmethod
     def additional_info(info) -> str:
         return f"Additional information: {info}"
+    
+    @staticmethod
+    def relevant_characters(characters) -> str:
+        if characters is None:
+            return ""
+        characters = "\n".join([f"- Character name: {character.name}\n- Character description: {character.description}\n- Character items: {character.inventory}" for character in characters])
+        return f"The story characters that are found on the current location are: {characters}"

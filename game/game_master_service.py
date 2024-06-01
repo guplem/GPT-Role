@@ -10,7 +10,7 @@ from models.game_definition import GameDefinition
 from models.game_master_response import GameMasterResponse
 from models.state import GameState
 
-model = "gpt-3.5-turbo-0613"
+model = "gpt-3.5-turbo"
 
 
 class GameMasterService:
@@ -57,7 +57,7 @@ class GameMasterService:
                        game_definition: GameDefinition, summaries: [str]) -> GameMasterResponse:
         result = self.call_llm(action, game_definition, "\n".join(summaries), relevant_characters)
         if relevant_characters is not None:
-            relevant_characters = self.update_characters("\n".join(summaries) + result, relevant_characters)
+            relevant_characters = self.update_characters("\n".join(summaries)+result, relevant_characters, state.location())
         return GameMasterResponse(result, relevant_characters, GameState(result, "Action"))
 
     def call_llm(self, prompt: str, game_definition: GameDefinition, summary: str,
@@ -73,7 +73,7 @@ class GameMasterService:
                             f"{GameMasterPrompt.year(self.game_definition.year())}"
                             f"{GameMasterPrompt.objectives(self.game_definition.objectives())}"
                             f"{GameMasterPrompt.additional_info(self.game_definition.additional_info())}"
-                            f"{GameMasterPrompt.character_definition(self.game_definition.character_definition())}."},
+                            f"{GameMasterPrompt.character_definition(relevant_characters)}."},
                 {"role": "user", "content": f"{prompt}"}
             ],
             tools=self.TOOLS,
@@ -88,13 +88,14 @@ class GameMasterService:
         print("[GAME_MASTER_SERVICE] Executing conflict", dice)
         messages = [
             {"role": "system",
-             "content": f"{GameMasterPrompt.GAME_MASTER_CONFLICT_ROLE} "
+             "content": f"{GameMasterPrompt.GAME_MASTER_CONFLICT_ROLE}"
                         f"{GameMasterPrompt.GAME_MECHANICS}"
                         f"{GameMasterPrompt.theme(self.game_definition.theme())}"
                         f"{GameMasterPrompt.year(self.game_definition.year())}"
                         f"{GameMasterPrompt.objectives(self.game_definition.objectives())}"
                         f"{GameMasterPrompt.additional_info(self.game_definition.additional_info())}"
-                        f"{GameMasterPrompt.character_definition(self.game_definition.character_definition())}."
+                        f"{GameMasterPrompt.character_definition(self.game_definition.character_definition())}"
+                        f"{GameMasterPrompt.relevant_characters(self.game_definition.relevant_characters())}."
              },
             {"role": "assistant",
              "content": f"In this world, the things that have happened before are:\n{summary}"},
@@ -197,8 +198,8 @@ class GameMasterService:
         )
 
         return response.choices[0].message.content
-
-    def update_characters(self, answer, characters: [Character]) -> ChatCompletion:
+    
+    def update_characters(self, answer, characters: [Character], location) -> ChatCompletion:
         print("[GAME_MASTER_SERVICE] Updating characters")
         # Use chat gpt to see if a character from the list should be updated because of the action in the answer
 
@@ -210,10 +211,10 @@ class GameMasterService:
                            "You always receive a list of dictionaries with characters and you have to update them based on new information. "
                            "Only update description if there is something relevant to be added/removed/updated from the current character description."
                            "You can only answer with the list of characters. "
-                           "It is possible that some parts of the json need to be updated while keeping meaningful information. "
+                           "It is possible that some parts of the json need to be updated while keeping meaningful information."
                            "If it appears a character that is not in the list it needs to be created considering the following attributes: {name:str, description:str, location:str, inventory:[str]}. All attributes are mandatory."
                            "The character can be created only if the name, description and location are explicitly said on the text."
-
+                           f"The current location is: {location}."
             },
             {"role": "user",
              "content": f"This is my list of characters: {characters}\nThis is the new information: {answer}."},
