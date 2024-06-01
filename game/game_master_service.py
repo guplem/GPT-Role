@@ -9,6 +9,7 @@ from models.game_definition import GameDefinition
 from models.game_master_response import GameMasterResponse
 from models.state import GameState
 
+model = "gpt-3.5-turbo-0613"
 
 class GameMasterService:
     TOOLS = [
@@ -46,7 +47,7 @@ class GameMasterService:
                        game_definition: GameDefinition, summaries: [str]) -> GameMasterResponse:
         result = self.call_llm(action, game_definition, "\n".join(summaries), relevant_characters)
         if relevant_characters is not None:
-            relevant_characters = self.update_characters(result, relevant_characters)
+            relevant_characters = self.update_characters("\n".join(summaries)+result, relevant_characters)
         return GameMasterResponse(result, relevant_characters, GameState(result, "Action"))
 
     def call_llm(self, prompt: str, game_definition: GameDefinition, summary: str,
@@ -92,7 +93,7 @@ class GameMasterService:
             {"role": "user",
              "content": f"{prompt}\nI rolled a d20 dice and I got this number: {dice} \nUsing less than 3 sentences, how does the story continue?"}]
         response = client.chat.completions.create(
-            model="gpt-3.5-turbo",
+            model=model,
             messages=messages,
         )
         return response
@@ -115,7 +116,7 @@ class GameMasterService:
             {"role": "user",
              "content": f"{prompt}\nUsing less than 3 sentences, how does the story continue?"}]
         response = client.chat.completions.create(
-            model="gpt-3.5-turbo",
+            model=model,
             messages=messages,
         )
         return response
@@ -160,7 +161,7 @@ class GameMasterService:
             },
         ]
         response = client.chat.completions.create(
-            model="gpt-3.5-turbo",
+            model=model,
             messages=messages,
         )
 
@@ -181,12 +182,13 @@ class GameMasterService:
                            "It is possible that some parts of the json need to be updated while keeping meaningful information. "
                            "If it appears a character that is not in the list it needs to be created considering the following attributes: {name:str, description:str, location:str, inventory:[str]}. All attributes are mandatory."
                            "The character can be created only if the name, description and location are explicitly said on the text."
+
             },
             {"role": "user",
                 "content": f"This is my list of characters: {characters}\nThis is the new information: {answer}."},
         ]
         response = client.chat.completions.create(
-            model="gpt-3.5-turbo",
+            model=model,
             messages=messages,
         )
         print(response.choices[0].message.content)
