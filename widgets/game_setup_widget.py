@@ -8,38 +8,45 @@ from models.game_definition import GameDefinition
 def game_setup():
     st.title("New Game")
 
-    def accept_random():
-        if not DataService().gameDefinition.characterDefinition:
-            DataService().gameDefinition.characterDefinition = DataService().game_definition_suggestion.characterDefinition
-        if not DataService().gameDefinition.year:
-            DataService().gameDefinition.year = DataService().game_definition_suggestion.year
-        if not DataService().gameDefinition.theme:
-            DataService().gameDefinition.theme = DataService().game_definition_suggestion.theme
-        if not DataService().gameDefinition.objective:
-            DataService().gameDefinition.objective = DataService().game_definition_suggestion.objective
-        if not DataService().gameDefinition.additionalInfo:
-            DataService().gameDefinition.additionalInfo = DataService().game_definition_suggestion.additionalInfo
+    def accept_suggestion():
+        if not st.session_state["characterDefinition"]:
+            st.session_state["characterDefinition"] = DataService().game_definition_suggestion.character_definition()
+        if not st.session_state["year"]:
+            st.session_state["year"] = DataService().game_definition_suggestion.year()
+        if not st.session_state["theme"]:
+            st.session_state["theme"] = DataService().game_definition_suggestion.theme()
+        if not st.session_state["objective"]:
+            st.session_state["objective"] = DataService().game_definition_suggestion.objectives()
+        if not st.session_state["additionalInfo"]:
+            st.session_state["additionalInfo"] = DataService().game_definition_suggestion.additional_info()
+
+    def clear():
+        st.session_state["characterDefinition"] = ""
+        st.session_state["year"] = ""
+        st.session_state["theme"] = ""
+        st.session_state["objective"] = ""
+        st.session_state["additionalInfo"] = ""
+
 
     col1, col2, col3 = st.columns(3)
 
     with col1:
-        st.button("Randomize", on_click= DataService().change_game_definition_suggestion)
+        st.button("New Suggestion", on_click= DataService().change_game_definition_suggestion)
 
     with col2:
-        st.button("Accept Suggestions", on_click=accept_random)
+        st.button("Accept Suggestions", on_click= accept_suggestion)
 
     with col3:
-        st.button("Clear", on_click= lambda: DataService().gameDefinition.clear())
+        st.button("Clear", on_click= clear)
 
-    st.text_area("Character Definition", value=DataService().gameDefinition.characterDefinition, key="characterDefinition", placeholder=DataService().game_definition_suggestion.characterDefinition)
-    st.text_input("Year", value=DataService().gameDefinition.year, key="year", placeholder=DataService().game_definition_suggestion.year)
-    st.text_input("Theme", value=DataService().gameDefinition.theme, key="theme", placeholder=DataService().game_definition_suggestion.theme)
-    st.text_input("Objective", value=DataService().gameDefinition.objective, key="objective", placeholder=DataService().game_definition_suggestion.objective)
-    st.text_area("Additional Info", value=DataService().gameDefinition.additionalInfo, key="additionalInfo", placeholder=DataService().game_definition_suggestion.additionalInfo)
+    st.text_area("Character Definition", key="characterDefinition", placeholder=DataService().game_definition_suggestion.character_definition())
+    st.text_input("Year", key="year", placeholder=DataService().game_definition_suggestion.year())
+    st.text_input("Theme", key="theme", placeholder=DataService().game_definition_suggestion.theme())
+    st.text_input("Objective", key="objective", placeholder=DataService().game_definition_suggestion.objectives())
+    st.text_area("Additional Info", key="additionalInfo", placeholder=DataService().game_definition_suggestion.additional_info())
 
     def on_submit():
-        definition = GameDefinition(DataService().gameDefinition.characterDefinition, DataService().gameDefinition.year, DataService().gameDefinition.theme, DataService().gameDefinition.objective, DataService().gameDefinition.additionalInfo)
-        GameManager().start_game(definition)
+        GameManager().start_game(GameDefinition(st.session_state["characterDefinition"], st.session_state["year"], st.session_state["theme"], st.session_state["objective"], st.session_state["additionalInfo"]))
 
     st.button("Start Game", on_click= on_submit)
 

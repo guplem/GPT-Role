@@ -1,6 +1,6 @@
 class GameDefinition:
     def __init__(self,  character_definition, year, theme, objective, additional_info):
-        self._characterDefinition = character_definition
+        self._character_definition = character_definition
         self._year = year
         self._theme = theme
         self._objective = objective
@@ -8,7 +8,7 @@ class GameDefinition:
 
     def __str__(self):
         return f"""
-        Character definition: {self._characterDefinition}
+        Character definition: {self._character_definition}
         Year: {self._year}
         Theme: {self._theme}
         Objective: {self._objective}
@@ -16,7 +16,7 @@ class GameDefinition:
         """
 
     def character_definition(self) -> str:
-        return self._characterDefinition
+        return self._character_definition
 
     def objectives(self) -> str:
         return self._objective
@@ -29,10 +29,3 @@ class GameDefinition:
 
     def additional_info(self) -> str:
         return self._additionalInfo
-
-    def clear(self):
-        self._characterDefinition = ""
-        self._year = ""
-        self._theme = ""
-        self._objective = ""
-        self._additionalInfo = ""
