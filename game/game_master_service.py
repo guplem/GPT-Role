@@ -2,6 +2,7 @@ from openai import OpenAI
 import random
 
 from models.game_master_response import GameMasterResponse
+from data.data_service import DataService
 from models.state import GameState
 from utils.singleton import Singleton
 from game.game_master_utils import game_master_setup as prompts
@@ -22,8 +23,10 @@ class GameMasterService(metaclass=Singleton):
     def call_llm(self, prompt) -> None:
         # This is effectively telling ChatGPT what we're going to use its JSON output for.
         game_mecanics = prompts.game_mecanics
+        # world_info = DataService().gameDefinition.theme + DataService().gameDefinition.objective
         world_info = "You are in a fantasy world called Aerthoria, a land of magic and mystery. The world is populated by dwarfs, elves, humans, and orcs. The capital city is Eldoria, a bustling metropolis where adventurers gather to seek quests and treasures. The world is threatened by an ancient evil known as the Shadow King, who seeks to plunge Aerthoria into eternal darkness."
-        character_info = "The player is Aeric a farmer that works for the local lord. He is a skilled archer and has a loyal dog named Bran. Aeric is on a quest to find the lost sword of King Aldric, a legendary weapon that can defeat the Shadow King."
+        character_info = DataService().gameDefinition.characterDefinition + DataService().gameDefinition.additionalInfo
+        # character_info = "The player is Aeric a farmer that works for the local lord. He is a skilled archer and has a loyal dog named Bran. Aeric is on a quest to find the lost sword of King Aldric, a legendary weapon that can defeat the Shadow King."
         tools = prompts.tools
         
         client = OpenAI()

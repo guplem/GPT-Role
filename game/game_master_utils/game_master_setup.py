@@ -13,8 +13,8 @@ tools = [
             "function": {
             "name": "conflict",
             "description": """
-                - Turn-Based: Combat is typically turn-based, with each player and NPC acting in a determined order (initiative).
-                - Actions: On their turn, characters can perform actions such as attacking, casting spells, or using items.
+                - Turn-Based: Conflict is typically turn-based, with each player and NPC acting in a determined order (initiative).
+                - Actions: On their turn, characters can perform actions such as attacking, casting spells, using items or doing any action that can be useful during the conflict.
                 - Hit Points: Characters have hit points (HP) representing their health. Damage reduces HP, and reaching zero HP can result in incapacitation or death."""
             }},
             {"type": "function",
