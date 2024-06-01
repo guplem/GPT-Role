@@ -1,5 +1,5 @@
 import streamlit as st
 
-class GameSituation:
-    def build(self):
-        st.write("Game Situation")
+
+def game_situation():
+    st.write("Game Situation")

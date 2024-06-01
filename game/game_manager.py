@@ -1,23 +1,21 @@
 # A class that contains the game step (true/false) depending on the seup if done or not
+import streamlit as st
+
+from data.data_service import DataService
+
 
 class GameManager:
 
     _instance = None
-    @staticmethod
-    def get_instance():
-        if not GameManager._instance:
-            GameManager()
-        return GameManager._instance
+    def __new__(cls, *args, **kwargs):
+        if cls._instance is None:
+            cls._instance = super(GameManager, cls).__new__(cls)
+        return cls._instance
 
-    def __init__(self):
-        if not GameManager._instance:
-            GameManager._instance = self
-        else:
-            raise Exception("You cannot create another GameManager class")
-        self.setup_done = False
 
-    def start_game(self):
-        self.setup_done = True
+    def start_game(self) -> None:
+        print ("Start Game")
+        DataService().set_game_started(True)
 
-    def is_setup_done(self):
-        return self.setup_done
+    def is_game_started(self)-> bool:
+        return DataService().is_game_started()
