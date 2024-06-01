@@ -47,7 +47,6 @@ class GameMasterService:
         return cls._instance
 
     def start_game(self, game_definition: GameDefinition) -> GameMasterResponse:
-        print(DataService().API_KEY)
         self.client = OpenAI(api_key=DataService().API_KEY)
         self.game_definition = game_definition
         initial_context = self.__initialize_game_context()
@@ -56,8 +55,8 @@ class GameMasterService:
     def perform_action(self, action: str, relevant_characters: [Character], state: GameState,
                        game_definition: GameDefinition, summaries: [str]) -> GameMasterResponse:
         result = self.call_llm(action, game_definition, "\n".join(summaries), relevant_characters)
-        if relevant_characters is not None:
-            relevant_characters = self.update_characters("\n".join(summaries)+result, relevant_characters, state.location())
+        # if relevant_characters is not None:
+        #     relevant_characters = self.update_characters("\n".join(summaries)+result, relevant_characters, state.location())
         return GameMasterResponse(result, relevant_characters, GameState(result, "Action"))
 
     def call_llm(self, prompt: str, game_definition: GameDefinition, summary: str,
@@ -67,13 +66,15 @@ class GameMasterService:
         response = self.client.chat.completions.create(
             model="gpt-3.5-turbo",
             messages=[
-                {"role": "system",
-                 "content": f"{GameMasterPrompt.DECIDE_ACTION_BOT_ROLE} {GameMasterPrompt.GAME_MECHANICS}"
-                            f"{GameMasterPrompt.theme(self.game_definition.theme())}"
-                            f"{GameMasterPrompt.year(self.game_definition.year())}"
-                            f"{GameMasterPrompt.objectives(self.game_definition.objectives())}"
-                            f"{GameMasterPrompt.additional_info(self.game_definition.additional_info())}"
-                            f"{GameMasterPrompt.character_definition(relevant_characters)}."},
+                {
+                    "role": "system",
+                    "content":
+                        f"{GameMasterPrompt.DECIDE_ACTION_BOT_ROLE}"
+                        f"{GameMasterPrompt.theme(self.game_definition.theme())}"
+                        f"{GameMasterPrompt.year(self.game_definition.year())}"
+                        f"{GameMasterPrompt.objectives(self.game_definition.objectives())}"
+                        f"{GameMasterPrompt.additional_info(self.game_definition.additional_info())}"
+                        f"{GameMasterPrompt.character_definition(relevant_characters)}."},
                 {"role": "user", "content": f"{prompt}"}
             ],
             tools=self.TOOLS,
@@ -87,20 +88,23 @@ class GameMasterService:
         dice = random.randint(1, 20)
         print("[GAME_MASTER_SERVICE] Executing conflict", dice)
         messages = [
-            {"role": "system",
-             "content": f"{GameMasterPrompt.GAME_MASTER_CONFLICT_ROLE}"
-                        f"{GameMasterPrompt.GAME_MECHANICS}"
-                        f"{GameMasterPrompt.theme(self.game_definition.theme())}"
-                        f"{GameMasterPrompt.year(self.game_definition.year())}"
-                        f"{GameMasterPrompt.objectives(self.game_definition.objectives())}"
-                        f"{GameMasterPrompt.additional_info(self.game_definition.additional_info())}"
-                        f"{GameMasterPrompt.character_definition(self.game_definition.character_definition())}"
-                        f"{GameMasterPrompt.relevant_characters(self.game_definition.relevant_characters())}."
+            {
+                "role": "system",
+                "content":
+                    f"{GameMasterPrompt.BASE_PROMPT}"
+                    f"{GameMasterPrompt.GAME_MASTER_CONFLICT_ROLE}"
+                    f"{GameMasterPrompt.GAME_MECHANICS}"
+                    f"{GameMasterPrompt.theme(self.game_definition.theme())}"
+                    f"{GameMasterPrompt.year(self.game_definition.year())}"
+                    f"{GameMasterPrompt.objectives(self.game_definition.objectives())}"
+                    f"{GameMasterPrompt.additional_info(self.game_definition.additional_info())}"
+                    f"{GameMasterPrompt.character_definition(self.game_definition.character_definition())}"
+                    # f"{GameMasterPrompt.relevant_characters(self.game_definition.relevant_characters())}."
              },
             {"role": "assistant",
              "content": f"In this world, the things that have happened before are:\n{summary}"},
             {"role": "user",
-             "content": f"{prompt}\nI rolled a d20 dice and I got this number: {dice} \nUsing less than 3 sentences, how does the story continue?"}]
+             "content": f"{prompt}\nI rolled a d20 dice and I got this number: {dice}"}]
         response = self.client.chat.completions.create(
             model=model,
             messages=messages,
@@ -108,22 +112,23 @@ class GameMasterService:
         return response
 
     def trivial_action(self, prompt: str, summary: str) -> ChatCompletion:
-        dice = random.randint(1, 20)
-        print("[GAME_MASTER_SERVICE] Executing conflict", dice)
+        print("[GAME_MASTER_SERVICE] Executing trivial_action")
         messages = [
-            {"role": "system",
-             "content": f"{GameMasterPrompt.TRIVIAL_ACTION} "
-                        f"{GameMasterPrompt.GAME_MECHANICS}"
-                        f"{GameMasterPrompt.theme(self.game_definition.theme())}"
-                        f"{GameMasterPrompt.year(self.game_definition.year())}"
-                        f"{GameMasterPrompt.objectives(self.game_definition.objectives())}"
-                        f"{GameMasterPrompt.additional_info(self.game_definition.additional_info())}"
-                        f"{GameMasterPrompt.character_definition(self.game_definition.character_definition())}."
+            {
+                "role": "system",
+                "content":
+                    f"{GameMasterPrompt.BASE_PROMPT}"
+                    f"{GameMasterPrompt.TRIVIAL_ACTION} "
+                    f"{GameMasterPrompt.theme(self.game_definition.theme())}"
+                    f"{GameMasterPrompt.year(self.game_definition.year())}"
+                    f"{GameMasterPrompt.objectives(self.game_definition.objectives())}"
+                    f"{GameMasterPrompt.additional_info(self.game_definition.additional_info())}"
+                    f"{GameMasterPrompt.character_definition(self.game_definition.character_definition())}."
              },
             {"role": "assistant",
              "content": f"In this world, the things that have happened before are:\n{summary}"},
             {"role": "user",
-             "content": f"{prompt}\nUsing less than 3 sentences, how does the story continue?"}]
+             "content": f"{prompt}"}]
         response = self.client.chat.completions.create(
             model=model,
             messages=messages,
@@ -134,19 +139,21 @@ class GameMasterService:
         print("[GAME_MASTER_SERVICE] Executing role play")
 
         messages = [
-            {"role": "system",
-             "content": f"{GameMasterPrompt.GAME_MASTER_ROLE_PLAYING_ROLE}"
-                        f"{GameMasterPrompt.GAME_MECHANICS}"
-                        f"{GameMasterPrompt.theme(self.game_definition.theme())}"
-                        f"{GameMasterPrompt.year(self.game_definition.year())}"
-                        f"{GameMasterPrompt.objectives(self.game_definition.objectives())}"
-                        f"{GameMasterPrompt.additional_info(self.game_definition.additional_info())}"
-                        f"{GameMasterPrompt.character_definition(self.game_definition.character_definition())}."
+            {
+                "role": "system",
+                "content":
+                    f"{GameMasterPrompt.BASE_PROMPT}"
+                    f"{GameMasterPrompt.GAME_MASTER_ROLE_PLAYING_ROLE}"
+                    f"{GameMasterPrompt.theme(self.game_definition.theme())}"
+                    f"{GameMasterPrompt.year(self.game_definition.year())}"
+                    f"{GameMasterPrompt.objectives(self.game_definition.objectives())}"
+                    f"{GameMasterPrompt.additional_info(self.game_definition.additional_info())}"
+                    f"{GameMasterPrompt.character_definition(self.game_definition.character_definition())}."
              },
             {"role": "assistant",
              "content": f"In this world, the things that have happened before are:\n{summary}"},
             {"role": "user",
-             "content": f"{prompt}\nUsing less than 3 sentences, how does the story continue?"}]
+             "content": f"{prompt}"}]
         response = self.client.chat.completions.create(
             model=model,
             messages=messages,
@@ -159,18 +166,19 @@ class GameMasterService:
         messages = [
             {
                 "role": "system",
-                "content": f"{GameMasterPrompt.GAME_MASTER_STORY_TELLING_ROLE}"
-                           f"{GameMasterPrompt.GAME_MECHANICS}"
-                           f"{GameMasterPrompt.theme(self.game_definition.theme())}"
-                           f"{GameMasterPrompt.year(self.game_definition.year())}"
-                           f"{GameMasterPrompt.objectives(self.game_definition.objectives())}"
-                           f"{GameMasterPrompt.additional_info(self.game_definition.additional_info())}"
-                           f"{GameMasterPrompt.character_definition(self.game_definition.character_definition())}."
+                "content":
+                    f"{GameMasterPrompt.BASE_PROMPT}"
+                    f"{GameMasterPrompt.GAME_MASTER_STORY_TELLING_ROLE}"
+                    f"{GameMasterPrompt.theme(self.game_definition.theme())}"
+                    f"{GameMasterPrompt.year(self.game_definition.year())}"
+                    f"{GameMasterPrompt.objectives(self.game_definition.objectives())}"
+                    f"{GameMasterPrompt.additional_info(self.game_definition.additional_info())}"
+                    f"{GameMasterPrompt.character_definition(self.game_definition.character_definition())}."
             },
             {"role": "assistant",
              "content": f"In this world, the things that have happened before are:\n{summary}"},
             {"role": "user",
-             "content": f"{prompt}\nUsing less than 3 sentences, how does the story continue?"}]
+             "content": f"{prompt}"}]
         response = self.client.chat.completions.create(
             model="gpt-3.5-turbo",
             messages=messages,
@@ -183,13 +191,13 @@ class GameMasterService:
         messages = [
             {
                 "role": "system",
-                "content": f"{GameMasterPrompt.GAME_MASTER_INITIALIZE_CONTEXT}"
-                           f"{GameMasterPrompt.GAME_MECHANICS}"
-                           f"{GameMasterPrompt.theme(self.game_definition.theme())}"
-                           f"{GameMasterPrompt.year(self.game_definition.year())}"
-                           f"{GameMasterPrompt.objectives(self.game_definition.objectives())}"
-                           f"{GameMasterPrompt.additional_info(self.game_definition.additional_info())}"
-                           f"{GameMasterPrompt.character_definition(self.game_definition.character_definition())}."
+                "content":
+                    f"{GameMasterPrompt.GAME_MASTER_INITIALIZE_CONTEXT}"
+                    f"{GameMasterPrompt.theme(self.game_definition.theme())}"
+                    f"{GameMasterPrompt.year(self.game_definition.year())}"
+                    f"{GameMasterPrompt.objectives(self.game_definition.objectives())}"
+                    f"{GameMasterPrompt.additional_info(self.game_definition.additional_info())}"
+                    f"{GameMasterPrompt.character_definition(self.game_definition.character_definition())}."
             },
         ]
         response = self.client.chat.completions.create(

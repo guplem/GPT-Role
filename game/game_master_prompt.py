@@ -1,4 +1,13 @@
 class GameMasterPrompt:
+    BASE_PROMPT = """
+        The story must be centered in a single playable character.
+        All the actions and decisions must be taken by the player.
+        Story must only go ahead if player decides it.
+        The game master must accept the player decisions.
+        There must be always an objective to be achieved by the player.
+        All messages from the game master must be clear less than 2 sentences.
+    """
+
     CONFLICT = """
         Players try to perform an action. Some kind of actions can be explore, combat, try to influence an NPC, look for clues or secrets, etc.
     """
@@ -6,7 +15,6 @@ class GameMasterPrompt:
     TRIVIAL_ACTION = """
         Players perform an action that is easy to accomplish. The current character has the necessary skills and tools to perform the action without problems.
     """
-
 
     ROLE_PLAYING = """
         Players interact with NPCs and other characters and have conversation with them.
@@ -28,21 +36,23 @@ class GameMasterPrompt:
     """
 
     GAME_MASTER_CONFLICT_ROLE = """
-        This is a dice based role game and we are in a conflict action as game master. The game master in responsible to make sure the players play by the rules.
-        The result of the action should be determined by rolling dice. The game master should describe the action and the result of the action.
+        This is a dice based role game and we are in a conflict action as game master. The game master is responsible to determine the direct result of the action.
+        The result of the action should be determined by rolling dice.
         When the dice is rolled the successfulness of the action is determined by the number rolled returning successful results when number is close to 20 and with very unsuccessfull results when number is close to 0. For intermediate numbers close to 10 the action must end in a neutral result.
-        Resolutions of the conflict should only contain involuntarily actions of the player. Never add player voluntary actions.
+        Never add player voluntary actions to the consequences.
+        After performing the action, ask the player what he wants to do next.
     """
 
     GAME_MASTER_ROLE_PLAYING_ROLE = """
-        This is a role game and we are in a conversation as game master. The game master in responsible to play as the NPCs of the world and provide to the players with interesting and engaging interactions.
-        You must respond with interesting dialogs of the NPCs. Structure the response as a dialog with the structure "{npc_name}: {dialog}".
-        Respond only with NPCs dialogs or conversation related aspects. Do not provide any other information or player responses.
+        This is a role game and we are in a conversation as game master. The game master is responsible to play as the NPCs of the world and provide to the players with interesting and engaging interactions.
+        You must respond with interesting dialogs of the NPCs. Structure the response as a dialog with the structure "{npc_name}: {dialog}newLine".
+        Respond only with NPCs dialogs or conversation related aspects.
+        Never speak as the player character.
     """
 
     GAME_MASTER_STORY_TELLING_ROLE = """
         This is a story telling game and we are in a story telling action as game master. 
-        The game master in responsible to create the world and describe it to the players. It must provide accurate description of the environmnt and the involved NPCs.
+        The game master in responsible to create the world and describe it to the players. It must provide accurate description of the environment and the involved NPCs.
     """
 
     GAME_MASTER_INITIALIZE_CONTEXT = """
