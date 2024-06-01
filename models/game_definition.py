@@ -29,3 +29,12 @@ class GameDefinition:
 
     def additional_info(self) -> str:
         return self._additionalInfo
+
+    def to_json(self):
+        return {
+            "characterDefinition": self._character_definition,
+            "year": self._year,
+            "theme": self._theme,
+            "objective": self._objective,
+            "additionalInfo": self._additionalInfo
+        }

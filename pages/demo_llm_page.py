@@ -1,5 +1,4 @@
 import streamlit as st
-import llm as llm
 
 # Streamlit app
 st.title("Chat with GPT-4")
