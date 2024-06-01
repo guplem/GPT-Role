@@ -13,3 +13,10 @@ class GameDefinition:
         \nTheme: {self.theme}
         \nObjective: {self.objective}
         \nAdditionalInfo: {self.additionalInfo}"""
+
+    def clear(self):
+        self.characterDefinition = ""
+        self.year = ""
+        self.theme = ""
+        self.objective = ""
+        self.additionalInfo = ""
