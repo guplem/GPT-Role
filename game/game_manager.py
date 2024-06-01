@@ -42,3 +42,8 @@ class GameManager (metaclass=Singleton):
     @staticmethod
     def get_characters_in_current_location() -> [Character]:
         return DataService().get_characters_of_location(DataService().state.location())
+
+    @staticmethod
+    def reset_game() -> None:
+        print ("Resetting game...")
+        DataService().reset()

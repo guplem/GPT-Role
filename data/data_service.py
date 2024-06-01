@@ -231,3 +231,10 @@ class DataService(metaclass=Singleton):
 
     def change_game_definition_suggestion(self):
         self.game_definition_suggestion = random.choice(self.randomGameDefinitions)
+
+    def reset(self):
+        self.gameDefinition = None
+        self.gameStarted = False
+        self.state = GameState("Welcome to the game", "prologue")
+        self.characters = []
+        self.summaries = []
