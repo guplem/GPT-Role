@@ -5,6 +5,8 @@ from openai.types.chat import ChatCompletion
 
 from data.data_service import DataService
 from game.game_master_prompt import GameMasterPrompt
+from models.game_master_response import GameMasterResponse
+from models.state import GameState
 
 
 class GameMasterService:
