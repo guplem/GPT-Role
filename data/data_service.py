@@ -1,17 +1,20 @@
 # A class that contains the game step (true/false) depending on the seup if done or not
-import streamlit as st
 
-class DataService:
-    SETUP_DONE = "setup_done"
+from models.game_definition import GameDefinition
+from utils.singleton import Singleton
 
-    _instance = None
-    def __new__(cls, *args, **kwargs):
-        if cls._instance is None:
-            cls._instance = super(DataService, cls).__new__(cls)
-        return cls._instance
+
+class DataService(metaclass=Singleton):
+
+    def __init__(self):
+        self.gameDefinition = None
+        self.gameStarted = False
 
     def set_game_started(self, game_started:bool) -> None:
-        st.session_state[self.SETUP_DONE] = game_started
+        self.gameStarted = game_started
 
     def is_game_started(self) -> bool:
-        return st.session_state.get(self.SETUP_DONE, False)
+        return self.gameStarted
+
+    def set_game_definition(self, game_definition: GameDefinition) -> None:
+        self.gameDefinition = game_definition

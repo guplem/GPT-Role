@@ -1,21 +1,15 @@
-# A class that contains the game step (true/false) depending on the seup if done or not
-import streamlit as st
-
 from data.data_service import DataService
+from models.game_definition import GameDefinition
+from utils.singleton import Singleton
 
+class GameManager (metaclass=Singleton):
 
-class GameManager:
-
-    _instance = None
-    def __new__(cls, *args, **kwargs):
-        if cls._instance is None:
-            cls._instance = super(GameManager, cls).__new__(cls)
-        return cls._instance
-
-
-    def start_game(self) -> None:
-        print ("Start Game")
+    @staticmethod
+    def start_game(game_definition: GameDefinition) -> None:
+        print ("Starting game...")
         DataService().set_game_started(True)
+        DataService().set_game_definition(game_definition)
 
-    def is_game_started(self)-> bool:
+    @staticmethod
+    def is_game_started()-> bool:
         return DataService().is_game_started()
