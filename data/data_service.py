@@ -1,8 +1,5 @@
-# A class that contains the game step (true/false) depending on the seup if done or not
-
 from models.game_definition import GameDefinition
 from utils.singleton import Singleton
-
 
 class DataService(metaclass=Singleton):
 
