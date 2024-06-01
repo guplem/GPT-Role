@@ -6,6 +6,10 @@ class GameDefinition:
         self.objective = objective
         self.additionalInfo = additional_info
 
-    # to string method
     def __str__(self):
-        return f"Game Definition: {self.characterDefinition}, {self.year}, {self.theme}, {self.objective}, {self.additionalInfo}"
+        return f"""
+        Character definition: {self.characterDefinition}
+        \nYear: {self.year}
+        \nTheme: {self.theme}
+        \nObjective: {self.objective}
+        \nAdditionalInfo: {self.additionalInfo}"""

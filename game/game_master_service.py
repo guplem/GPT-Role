@@ -33,6 +33,10 @@ class GameMasterService:
             cls._instance = super(GameMasterService, cls).__new__(cls)
         return cls._instance
 
+    def start_game(self, game_definition) -> GameMasterResponse:
+        # TODO: Implement the start_game method
+        return GameMasterResponse("Welcome Message", [], GameState("Game Started", "start"))
+
     def call_llm(self, prompt) -> None:
         # This is effectively telling ChatGPT what we're going to use its JSON output for.
         client = OpenAI()
