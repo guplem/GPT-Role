@@ -3,8 +3,8 @@ import streamlit as st
 from data.data_service import DataService
 
 st.set_page_config(
-    page_title="GPT-Role",
-    page_icon="🎲",
+    page_title="GPT-Role | Settings",
+    page_icon="⚙️",
     menu_items={"About":
        "## Authors\n"
        "- [Guillem Poy](https://github.com/guplem)\n"
@@ -24,10 +24,10 @@ st.divider()
 
 key = st.text_input("OpenAI API key", value=DataService().api_key(), type="password")
 
-if key is None or len(key) == 0 or key == "":
+if key is None or len(key) < 5:
     st.warning("Please provide an OpenAI API key to start the game.")
     st.stop()
 
 if st.button("Go to the Game"):
     DataService().API_KEY = key
-    st.switch_page("pages/game_page.py")
+    st.switch_page("pages/Game.py")

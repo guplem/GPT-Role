@@ -5,8 +5,8 @@ from models.turn import Turn
 
 
 st.set_page_config(
-    page_title="GPT-Role",
-    page_icon="🎲",
+    page_title="GPT-Role | History",
+    page_icon="📖",
     menu_items={"About":
        "## Authors\n"
        "- [Guillem Poy](https://github.com/guplem)\n"
@@ -23,15 +23,16 @@ if DataService().game_started() is False:
     st.title("Welcome to GPT-Role")
     st.write("Currently there is no game in progress.")
     if st.button("Start a new game"):
-        st.switch_page("pages/game_page.py")
+        st.switch_page("pages/Game.py")
     st.stop()
 
 
 st.title("Game Description")
-st.write(DataService().game_definition().__str__())
+st.write(DataService().game_definition().as_markdown())
 
+st.markdown("######")
 st.divider()
-st.markdown("#####")
+st.markdown("######")
 
 if DataService().history() is not None:
     st.title("History")

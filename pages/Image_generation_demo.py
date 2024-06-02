@@ -2,8 +2,8 @@ import streamlit as st
 from openai import OpenAI
 
 st.set_page_config(
-    page_title="GPT-Role",
-    page_icon="🎲",
+    page_title="GPT-Role | Image Generation demo",
+    page_icon="🖼️",
     menu_items={"About":
        "## Authors\n"
        "- [Guillem Poy](https://github.com/guplem)\n"

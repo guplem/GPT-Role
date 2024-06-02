@@ -38,3 +38,12 @@ class GameDefinition:
             "objective": self._objective,
             "additionalInfo": self._additionalInfo
         }
+
+    def as_markdown(self):
+        return f"""
+        **Character Definition:** {self._character_definition}
+        \n**Year:** {self._year}
+        \n**Theme:** {self._theme}
+        \n**Objective:** {self._objective}
+        \n**Additional Info:** {self._additionalInfo}
+        """
