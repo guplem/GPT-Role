@@ -65,12 +65,12 @@ class GameMasterService(metaclass=Singleton):
         initial_context = self.__initialize_game_context()
         return GameMasterResponse(initial_context, [], GameState(initial_context, "start"))
 
-    def perform_action(self, action: str, relevant_characters: [Character], state: GameState,
+    def perform_action(self, prompt: str, relevant_characters: [Character], state: GameState,
                        game_definition: GameDefinition, summaries: [str]) -> GameMasterResponse:
-        result, dice = self.call_llm(action, game_definition, summaries, relevant_characters)
+        result, dice, action = self.call_llm(prompt, game_definition, summaries, relevant_characters)
         # if relevant_characters is not None:
         #     relevant_characters = self.update_characters("\n".join(summaries)+result, relevant_characters, state.location())
-        return GameMasterResponse(result, relevant_characters, GameState(result, "Action", dice))
+        return GameMasterResponse(result, relevant_characters, GameState(result, "Action", dice, action))
 
     def call_llm(self, prompt: str, game_definition: GameDefinition, summaries: [str],
                  relevant_characters: [Character]) -> str:
@@ -98,7 +98,7 @@ class GameMasterService(metaclass=Singleton):
         )
 
         response2, dice = getattr(self, response.choices[0].message.tool_calls[0].function.name)(prompt, summary)
-        return response2.choices[0].message.content, dice
+        return response2.choices[0].message.content, dice, response.choices[0].message.tool_calls[0].function.name
 
     def conflict(self, prompt: str, summary: str) -> ChatCompletion:
         dice = random.randint(1, 20)
