@@ -46,6 +46,11 @@ class GameMasterService(metaclass=Singleton):
              "name": "impossible_action",
              "description": GameMasterPrompt.IMPOSSIBLE_ACTION
          }},
+        {"type": "function",
+         "function": {
+             "name": "conflict_arise",
+             "description": GameMasterPrompt.CONFLICT_ARISE
+         }},
     ]
 
     game_definition: GameDefinition
@@ -224,6 +229,27 @@ class GameMasterService(metaclass=Singleton):
                     f"{GameMasterPrompt.GAME_MASTER_IMPOSSIBLE_ACTION_ROLE}"
                     # f"{GameMasterPrompt.relevant_characters(self.game_definition.relevant_characters())}."
              },
+            {"role": "assistant",
+             "content": f"In this world, the things that have happened before are:\n{summary}"},
+            {"role": "user",
+             "content": f"{prompt}"}]
+        response = self.client.chat.completions.create(
+            model=model,
+            messages=messages,
+        )
+        return response
+
+    def conflict_arise(self, prompt: str, summary: str) -> ChatCompletion:
+        print("[GAME_MASTER_SERVICE] Executing conflict_arise")
+        messages = [
+            {
+                "role": "system",
+                "content":
+                    f"{GameMasterPrompt.BASE_PROMPT}"
+                    f"{GameMasterPrompt.GAME_MASTER_CONFLICT_ARISE_ROLE}"
+                    f"{GameMasterPrompt.GAME_MECHANICS}"
+                # f"{GameMasterPrompt.relevant_characters(self.game_definition.relevant_characters())}."
+            },
             {"role": "assistant",
              "content": f"In this world, the things that have happened before are:\n{summary}"},
             {"role": "user",

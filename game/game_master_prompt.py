@@ -34,6 +34,11 @@ class GameMasterPrompt:
         Consider if the action requires an object that the player does not have, if the action is not possible in the current location, if the action is not possible in the current situation, etc.
     """
 
+    CONFLICT_ARISE = """
+        It's been more than 3 player actions since there is no engaging events in the story.
+        The player does not have a clear objective to follow.
+    """
+
     GAME_MECHANICS = """
     The game mechanics are: 
         - Actions and outcomes are determined by rolling dice.
@@ -88,6 +93,11 @@ class GameMasterPrompt:
 
     GAME_MASTER_IMPOSSIBLE_ACTION_ROLE = """
         As a game master you must explain why the action is impossible to perform.
+    """
+
+    GAME_MASTER_CONFLICT_ARISE_ROLE = """
+        As a game master you must bring a distinct objective for the player.
+        Never create new player actions.
     """
 
     @staticmethod
