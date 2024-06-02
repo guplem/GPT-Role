@@ -9,12 +9,9 @@ class GameManager (metaclass=Singleton):
     @staticmethod
     def start_game(game_definition: GameDefinition) -> None:
         print ("Starting game...")
-        DataService().gameStarted = True
-        DataService().gameDefinition = game_definition
-
+        DataService().start_game(game_definition)
         response:GameMasterResponse = GameMasterService().start_game(game_definition)
-
-        DataService().set_new_game_master_response(response, None)
+        DataService().save_game_master_response(response, None)
 
 
     @staticmethod
@@ -22,7 +19,7 @@ class GameManager (metaclass=Singleton):
         print ("Performing action: " + action)
         response:GameMasterResponse = GameMasterService().perform_action(action, DataService().history())
 
-        DataService().set_new_game_master_response(response, action)
+        DataService().save_game_master_response(response, action)
 
     @staticmethod
     def reset_game() -> None:
