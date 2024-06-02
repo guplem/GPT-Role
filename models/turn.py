@@ -1,3 +1,4 @@
+import json
 from typing import Optional
 
 
@@ -20,3 +21,6 @@ class Turn:
             "player_action": self._player_action,
             "gm_response": self._game_master_response
         }
+
+    def to_json_string(self):
+        return json.dumps(self.to_json())

@@ -73,7 +73,7 @@ class GameMasterService(metaclass=Singleton):
         return GameMasterResponse(GameState(result), dice, gm_role)
 
     def call_llm(self, prompt: str, history: [Turn]) -> (str, Optional[int], str):
-        summary = "".join([summary.to_json() +"\n" for summary in history])
+        summary = ("[\n".join([summary.to_json_string() +",\n" for summary in history])) + "]"
         # This is effectively telling ChatGPT what we're going to use its JSON output for.
         # The request to the ChatGPT API.
         function_chosen = self.client.chat.completions.create(
