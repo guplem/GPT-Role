@@ -37,7 +37,7 @@ class GameManager (metaclass=Singleton):
 
         DataService().state = response.new_state()
         DataService().update_characters(response.characters_updates())
-        DataService().save_summary(response.summary())
+        DataService().save_summary("Player says: " + action + "\n\nGame Master responds: " + response.summary())
 
     @staticmethod
     def get_characters_in_current_location() -> [Character]:

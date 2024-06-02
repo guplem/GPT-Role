@@ -36,6 +36,11 @@ class GameMasterService(metaclass=Singleton):
              "name": "story_telling",
              "description": GameMasterPrompt.STORY_TELLING
          }},
+        {"type": "function",
+         "function": {
+             "name": "game_question",
+             "description": GameMasterPrompt.GAME_QUESTION
+         }}
     ]
 
     game_definition: GameDefinition
@@ -50,13 +55,14 @@ class GameMasterService(metaclass=Singleton):
 
     def perform_action(self, action: str, relevant_characters: [Character], state: GameState,
                        game_definition: GameDefinition, summaries: [str]) -> GameMasterResponse:
-        result = self.call_llm(action, game_definition, "\n".join(summaries), relevant_characters)
+        result = self.call_llm(action, game_definition, summaries, relevant_characters)
         # if relevant_characters is not None:
         #     relevant_characters = self.update_characters("\n".join(summaries)+result, relevant_characters, state.location())
         return GameMasterResponse(result, relevant_characters, GameState(result, "Action"))
 
-    def call_llm(self, prompt: str, game_definition: GameDefinition, summary: str,
+    def call_llm(self, prompt: str, game_definition: GameDefinition, summaries: [str],
                  relevant_characters: [Character]) -> str:
+        summary = "".join([summary+"\n" for summary in summaries])
         # This is effectively telling ChatGPT what we're going to use its JSON output for.
         # The request to the ChatGPT API.
         response = self.client.chat.completions.create(
@@ -70,7 +76,9 @@ class GameMasterService(metaclass=Singleton):
                         f"{GameMasterPrompt.year(self.game_definition.year())}"
                         f"{GameMasterPrompt.objectives(self.game_definition.objectives())}"
                         f"{GameMasterPrompt.additional_info(self.game_definition.additional_info())}"
-                        f"{GameMasterPrompt.character_definition(relevant_characters)}."},
+                        f"{GameMasterPrompt.character_definition(relevant_characters)}."
+                        f"In this world, the things that have happened before are: " + summary
+                },
                 {"role": "user", "content": f"{prompt}"}
             ],
             tools=self.TOOLS,
@@ -90,12 +98,6 @@ class GameMasterService(metaclass=Singleton):
                     f"{GameMasterPrompt.BASE_PROMPT}"
                     f"{GameMasterPrompt.GAME_MASTER_CONFLICT_ROLE}"
                     f"{GameMasterPrompt.GAME_MECHANICS}"
-                    f"{GameMasterPrompt.theme(self.game_definition.theme())}"
-                    f"{GameMasterPrompt.year(self.game_definition.year())}"
-                    f"{GameMasterPrompt.objectives(self.game_definition.objectives())}"
-                    f"{GameMasterPrompt.additional_info(self.game_definition.additional_info())}"
-                    f"{GameMasterPrompt.character_definition(self.game_definition.character_definition())}"
-                    # f"{GameMasterPrompt.relevant_characters(self.game_definition.relevant_characters())}."
              },
             {"role": "assistant",
              "content": f"In this world, the things that have happened before are:\n{summary}"},
@@ -115,11 +117,6 @@ class GameMasterService(metaclass=Singleton):
                 "content":
                     f"{GameMasterPrompt.BASE_PROMPT}"
                     f"{GameMasterPrompt.TRIVIAL_ACTION} "
-                    f"{GameMasterPrompt.theme(self.game_definition.theme())}"
-                    f"{GameMasterPrompt.year(self.game_definition.year())}"
-                    f"{GameMasterPrompt.objectives(self.game_definition.objectives())}"
-                    f"{GameMasterPrompt.additional_info(self.game_definition.additional_info())}"
-                    f"{GameMasterPrompt.character_definition(self.game_definition.character_definition())}."
              },
             {"role": "assistant",
              "content": f"In this world, the things that have happened before are:\n{summary}"},
@@ -140,11 +137,6 @@ class GameMasterService(metaclass=Singleton):
                 "content":
                     f"{GameMasterPrompt.BASE_PROMPT}"
                     f"{GameMasterPrompt.GAME_MASTER_ROLE_PLAYING_ROLE}"
-                    f"{GameMasterPrompt.theme(self.game_definition.theme())}"
-                    f"{GameMasterPrompt.year(self.game_definition.year())}"
-                    f"{GameMasterPrompt.objectives(self.game_definition.objectives())}"
-                    f"{GameMasterPrompt.additional_info(self.game_definition.additional_info())}"
-                    f"{GameMasterPrompt.character_definition(self.game_definition.character_definition())}."
              },
             {"role": "assistant",
              "content": f"In this world, the things that have happened before are:\n{summary}"},
@@ -165,11 +157,6 @@ class GameMasterService(metaclass=Singleton):
                 "content":
                     f"{GameMasterPrompt.BASE_PROMPT}"
                     f"{GameMasterPrompt.GAME_MASTER_STORY_TELLING_ROLE}"
-                    f"{GameMasterPrompt.theme(self.game_definition.theme())}"
-                    f"{GameMasterPrompt.year(self.game_definition.year())}"
-                    f"{GameMasterPrompt.objectives(self.game_definition.objectives())}"
-                    f"{GameMasterPrompt.additional_info(self.game_definition.additional_info())}"
-                    f"{GameMasterPrompt.character_definition(self.game_definition.character_definition())}."
             },
             {"role": "assistant",
              "content": f"In this world, the things that have happened before are:\n{summary}"},
@@ -202,6 +189,26 @@ class GameMasterService(metaclass=Singleton):
         )
 
         return response.choices[0].message.content
+
+    def game_question(self, prompt: str, summary: str) -> ChatCompletion:
+        print("[GAME_MASTER_SERVICE] Executing game_question")
+        messages = [
+            {
+                "role": "system",
+                "content":
+                    f"{GameMasterPrompt.GAME_MASTER_GAME_QUESTION_ROLE}"
+                    f"{GameMasterPrompt.GAME_MECHANICS}"
+                    # f"{GameMasterPrompt.relevant_characters(self.game_definition.relevant_characters())}."
+             },
+            {"role": "assistant",
+             "content": f"In this world, the things that have happened before are:\n{summary}"},
+            {"role": "user",
+             "content": f"{prompt}"}]
+        response = self.client.chat.completions.create(
+            model=model,
+            messages=messages,
+        )
+        return response
     
     def update_characters(self, answer, characters: [Character], location) -> ChatCompletion:
         print("[GAME_MASTER_SERVICE] Updating characters")

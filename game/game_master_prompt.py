@@ -24,6 +24,11 @@ class GameMasterPrompt:
         Players ask information about the world, the environment and the NPCs.
     """
 
+    GAME_QUESTION = """
+        Player asks a question about the status of the game not related to the story. Things like rules, inventory, abilities, etc.
+        Must not be a question between characters.
+    """
+
     GAME_MECHANICS = """
     The game mechanics are: 
         - Actions and outcomes are determined by rolling dice.
@@ -45,7 +50,7 @@ class GameMasterPrompt:
 
     GAME_MASTER_ROLE_PLAYING_ROLE = """
         This is a role game and we are in a conversation as game master. The game master is responsible to play as the NPCs of the world and provide to the players with interesting and engaging interactions.
-        You must respond with interesting dialogs of the NPCs. Structure the response as a dialog with the structure "{npc_name}: {dialog}newLine".
+        You must respond with interesting dialogs of the NPCs. Structure the response as a dialog with the structure "**{npc_name}**: {dialog}</break>".
         Respond only with NPCs dialogs or conversation related aspects.
         Never speak as the player character.
     """
@@ -67,6 +72,13 @@ class GameMasterPrompt:
         This is a role game and you are the game master. The game master in responsible to explain the result of the action to the player.
         The action is trivial and the player has the necessary skills and tools to perform the action without problems. Allways succeed.
         Respond to the action with a short description of the result of the action and ask the user what he wants to do next.
+    """
+
+    GAME_MASTER_GAME_QUESTION_ROLE = """
+        This is a role game and you are the game master.
+        The game master in responsible to answer the player questions about the game.
+        Respond to the question with a short and clear answer.
+        Story must never go ahead.
     """
 
     @staticmethod
