@@ -29,7 +29,7 @@ else:
     game_state()
 
 
-st.markdown('#')
-st.markdown('#')
-st.divider()
-st.button("Reset Game", on_click=GameManager().reset_game)
+# st.markdown('#')
+# st.markdown('#')
+# st.divider()
+# st.button("Reset Game", on_click=GameManager().reset_game)

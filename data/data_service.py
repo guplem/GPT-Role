@@ -34,38 +34,35 @@ class DataService(metaclass=Singleton):
     def __save_history(self, action:Optional[str], summary:str) -> None:
         turn = Turn(action, summary)
         self.__history.append(turn)
+        print("History: " + str(self.__history
+                                ))
 
-    def history(self):
+    def history(self) -> [Turn]:
         return self.__history
 
-    def last_response(self):
+    def last_response(self) -> GameMasterResponse:
         return self.__last_response
 
-    def game_definition(self):
+    def game_definition(self) -> Optional[GameDefinition]:
         return self.__gameDefinition
 
-    def game_started(self):
+    def game_started(self) -> bool:
         return self.__gameStarted
 
     __game_definition_suggestion: GameDefinition = random.choice(example_game_definitions)
 
-    def change_game_definition_suggestion(self):
+    def change_game_definition_suggestion(self) -> None:
         self.__game_definition_suggestion = random.choice(example_game_definitions)
 
-    def game_definition_suggestion(self):
+    def game_definition_suggestion(self) -> GameDefinition:
         return self.__game_definition_suggestion
 
-    def reset_game(self):
+    def reset_game(self) -> None:
         self.__gameDefinition = None
         self.__gameStarted = False
         self.__last_response = GameMasterResponse(GameState("Welcome to the game"))
         self.__history = []
 
-    def start_game(self, game_definition):
+    def start_game(self, game_definition) -> None:
         self.__gameDefinition = game_definition
         self.__gameStarted = True
-
-
-
-
-
