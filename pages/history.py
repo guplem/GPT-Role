@@ -1,8 +1,7 @@
 import streamlit as st
 
 from data.data_service import DataService
-from models.turn import Turn
-
+from widgets.menu import menu
 
 st.set_page_config(
     page_title="GPT-Role | History",
@@ -23,7 +22,7 @@ if DataService().game_started() is False:
     st.title("Welcome to GPT-Role")
     st.write("Currently there is no game in progress.")
     if st.button("Start a new game"):
-        st.switch_page("pages/Game.py")
+        st.switch_page("pages/game.py")
     st.stop()
 
 
@@ -47,3 +46,5 @@ if DataService().history() is not None:
         st.divider()
 else:
     st.write("No history yet, start playing!")
+
+menu()

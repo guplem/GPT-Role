@@ -1,6 +1,7 @@
 import streamlit as st
 
 from data.data_service import DataService
+from widgets.menu import menu
 
 st.set_page_config(
     page_title="GPT-Role | Settings",
@@ -30,4 +31,6 @@ if key is None or len(key) < 5:
 
 if st.button("Go to the Game"):
     DataService().API_KEY = key
-    st.switch_page("pages/Game.py")
+    st.switch_page("pages/game.py")
+
+menu()

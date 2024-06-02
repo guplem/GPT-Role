@@ -3,7 +3,7 @@ import streamlit as st
 from data.data_service import DataService
 from widgets.game_setup_widget import game_setup
 from widgets.game_situation import game_state
-
+from widgets.menu import menu
 
 st.set_page_config(
     page_title="GPT-Role | Game",
@@ -41,3 +41,5 @@ else:
     # st.markdown('#')
     # st.divider()
     # st.button("Reset Game", on_click=GameManager().reset_game)
+
+menu()
