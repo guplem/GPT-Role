@@ -59,7 +59,7 @@ else:
                 data=DataService().save_game()
             )
         with right_col:
-            uploaded_file = st.file_uploader("Choose a file")
+            uploaded_file = st.file_uploader("Upload a previous game file")
             if uploaded_file is not None:
                 # To read file as bytes:
                 DataService().load_game(uploaded_file)
