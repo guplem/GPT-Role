@@ -66,3 +66,13 @@ class DataService(metaclass=Singleton):
     def start_game(self, game_definition) -> None:
         self.__gameDefinition = game_definition
         self.__gameStarted = True
+
+    def save_game(self) -> dict:
+        game_data = {
+            "game_definition": self.__gameDefinition.to_json(),
+            "game_started": self.__gameStarted,
+            "last_response": self.__last_response.to_json(),
+            "history": [history.to_json() for history in self.__history]
+        }
+        print(game_data)
+        return game_data

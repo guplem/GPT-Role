@@ -1,4 +1,5 @@
 import streamlit as st
+import json
 
 from data.data_service import DataService
 from widgets.menu import menu
@@ -44,5 +45,13 @@ else:
             "##### Game Master\n" + summary.game_master_response()
             )
             st.divider()
+        
+        st.download_button(
+            label="Save Game",
+            file_name="GPT-Role_game.json",
+            mime="application/json",
+            data=json.dumps(DataService().save_game())
+        )
+
     else:
         st.write("No history yet, start playing!")
