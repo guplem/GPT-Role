@@ -19,13 +19,14 @@ st.set_page_config(
     },
     initial_sidebar_state="collapsed"
 )
+menu()
 
 key = DataService().api_key()
+
 if key is None or len(key) < 5:
     st.warning("Please provide an OpenAI API key to start the game.")
     if st.button("Go to Settings"):
         st.switch_page("main.py")
-    st.stop()
 
 else:
 
@@ -41,5 +42,3 @@ else:
     # st.markdown('#')
     # st.divider()
     # st.button("Reset Game", on_click=GameManager().reset_game)
-
-menu()

@@ -21,8 +21,12 @@ class DataService(metaclass=Singleton):
         load_dotenv()
         self.__API_KEY = os.getenv("OPENAI_API_KEY")
 
-    def api_key(self):
+    def api_key(self) -> Optional[str]:
         return self.__API_KEY
+
+    def set_api_key(self, key:str):
+        print("Setting API KEY to: " + key)
+        self.__API_KEY = key
 
     def save_game_master_response(self, response:GameMasterResponse, player_action:Optional[str]):
         self.__gameStarted = True

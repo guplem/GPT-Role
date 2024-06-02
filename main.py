@@ -17,6 +17,7 @@ st.set_page_config(
     },
     initial_sidebar_state="collapsed"
 )
+menu()
 
 st.title("GPT-Role")
 st.write("Welcome to GPT-Role, a game where you and an AI will create a story together.")
@@ -27,10 +28,8 @@ key = st.text_input("OpenAI API key", value=DataService().api_key(), type="passw
 
 if key is None or len(key) < 5:
     st.warning("Please provide an OpenAI API key to start the game.")
-    st.stop()
 
-if st.button("Go to the Game"):
-    DataService().API_KEY = key
-    st.switch_page("pages/game.py")
-
-menu()
+if st.button("Save"):
+    DataService().set_api_key(key)
+    if key is not None and len(key) > 5:
+        st.switch_page("pages/game.py")

@@ -17,34 +17,32 @@ st.set_page_config(
     },
     initial_sidebar_state="collapsed"
 )
+menu()
 
 if DataService().game_started() is False:
     st.title("Welcome to GPT-Role")
     st.write("Currently there is no game in progress.")
     if st.button("Start a new game"):
         st.switch_page("pages/game.py")
-    st.stop()
-
-
-st.title("Game Description")
-st.write(DataService().game_definition().as_markdown())
-
-st.markdown("######")
-st.divider()
-st.markdown("######")
-
-if DataService().history() is not None:
-    st.title("History")
-    for summary in reversed(DataService().history()):
-        if summary.player_action() is not None:
-            st.markdown(
-            "##### Player Action\n" + summary.player_action()
-            )
-        st.markdown(
-        "##### Game Master\n" + summary.game_master_response()
-        )
-        st.divider()
 else:
-    st.write("No history yet, start playing!")
 
-menu()
+    st.title("Game Description")
+    st.write(DataService().game_definition().as_markdown())
+
+    st.markdown("######")
+    st.divider()
+    st.markdown("######")
+
+    if DataService().history() is not None:
+        st.title("History")
+        for summary in reversed(DataService().history()):
+            if summary.player_action() is not None:
+                st.markdown(
+                "##### Player Action\n" + summary.player_action()
+                )
+            st.markdown(
+            "##### Game Master\n" + summary.game_master_response()
+            )
+            st.divider()
+    else:
+        st.write("No history yet, start playing!")
