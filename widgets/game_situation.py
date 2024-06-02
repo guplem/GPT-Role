@@ -16,12 +16,14 @@ situations = {
 
 def game_state():
     emoji = situations.get(DataService().last_response().action(), "🌍")
+
+    if DataService().last_response().dice() is not None:
+        st.write(f"You rolled a d20 and got a {DataService().last_response().dice()}")
+
     title = DataService().history()[-1].player_action() or "World setup..."
     st.header(emoji + " " + title)
     st.write(DataService().last_response().new_state().narrative())
     st.divider()
-    if DataService().last_response().dice() is not None:
-        st.write(f"You rolled: {DataService().last_response().dice()}")
 
     with st.form(key="action_form", border=False):
         action = ""
