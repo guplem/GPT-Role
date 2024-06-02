@@ -11,6 +11,8 @@ def game_state():
     st.title("Characters in this location:")
     for character in GameManager().get_characters_in_current_location():
         st.write(character.name())
+    if GameManager().get_current_state().dice() is not None:
+        st.write(f"You rolled: {GameManager().get_current_state().dice()}")
 
     action = ""
     st.text_input("Action", value=action, key="action")

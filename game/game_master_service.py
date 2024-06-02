@@ -67,10 +67,10 @@ class GameMasterService(metaclass=Singleton):
 
     def perform_action(self, action: str, relevant_characters: [Character], state: GameState,
                        game_definition: GameDefinition, summaries: [str]) -> GameMasterResponse:
-        result = self.call_llm(action, game_definition, summaries, relevant_characters)
+        result, dice = self.call_llm(action, game_definition, summaries, relevant_characters)
         # if relevant_characters is not None:
         #     relevant_characters = self.update_characters("\n".join(summaries)+result, relevant_characters, state.location())
-        return GameMasterResponse(result, relevant_characters, GameState(result, "Action"))
+        return GameMasterResponse(result, relevant_characters, GameState(result, "Action", dice))
 
     def call_llm(self, prompt: str, game_definition: GameDefinition, summaries: [str],
                  relevant_characters: [Character]) -> str:
@@ -97,8 +97,8 @@ class GameMasterService(metaclass=Singleton):
             tool_choice="required"
         )
 
-        response2 = getattr(self, response.choices[0].message.tool_calls[0].function.name)(prompt, summary)
-        return response2.choices[0].message.content
+        response2, dice = getattr(self, response.choices[0].message.tool_calls[0].function.name)(prompt, summary)
+        return response2.choices[0].message.content, dice
 
     def conflict(self, prompt: str, summary: str) -> ChatCompletion:
         dice = random.randint(1, 20)
@@ -119,7 +119,7 @@ class GameMasterService(metaclass=Singleton):
             model=model_llm,
             messages=messages,
         )
-        return response
+        return response, dice
 
     def trivial_action(self, prompt: str, summary: str) -> ChatCompletion:
         print("[GAME_MASTER_SERVICE] Executing trivial_action")
@@ -138,7 +138,7 @@ class GameMasterService(metaclass=Singleton):
             model=model_llm,
             messages=messages,
         )
-        return response
+        return response, None
 
     def role_playing(self, prompt: str, summary: str) -> ChatCompletion:
         print("[GAME_MASTER_SERVICE] Executing role play")
@@ -158,7 +158,7 @@ class GameMasterService(metaclass=Singleton):
             model=model_llm,
             messages=messages,
         )
-        return response
+        return response, None
 
     def story_telling(self, prompt: str, summary: str) -> ChatCompletion:
         print("[GAME_MASTER_SERVICE] Executing story telling")
@@ -178,7 +178,7 @@ class GameMasterService(metaclass=Singleton):
             model=model_llm,
             messages=messages,
         )
-        return response
+        return response, None
 
     def __initialize_game_context(self) -> str:
         print("[GAME_MASTER_SERVICE] Executing initialize game")
@@ -220,7 +220,7 @@ class GameMasterService(metaclass=Singleton):
             model=model_llm,
             messages=messages,
         )
-        return response
+        return response, None
 
     def impossible_action(self, prompt: str, summary: str) -> ChatCompletion:
         print("[GAME_MASTER_SERVICE] Executing impossible_action")
@@ -239,7 +239,7 @@ class GameMasterService(metaclass=Singleton):
             model=model_llm,
             messages=messages,
         )
-        return response
+        return response, None
 
     def conflict_arise(self, prompt: str, summary: str) -> ChatCompletion:
         print("[GAME_MASTER_SERVICE] Executing conflict_arise")
@@ -260,7 +260,7 @@ class GameMasterService(metaclass=Singleton):
             model=model_llm,
             messages=messages,
         )
-        return response
+        return response, None
     
     def update_characters(self, answer, characters: [Character], location) -> ChatCompletion:
         print("[GAME_MASTER_SERVICE] Updating characters")
