@@ -5,7 +5,8 @@ class GameMasterPrompt:
         Story must only go ahead if player decides it.
         The game master must accept the player decisions.
         There must be always an objective to be achieved by the player.
-        All messages from the game master must be clear less than 2 sentences.
+        All messages from the game master must be clear and concise.
+        Never exceed 4 sentences.
     """
 
     CONFLICT = """
