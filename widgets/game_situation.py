@@ -1,5 +1,6 @@
 import streamlit as st
 
+from data.data_service import DataService
 from game.game_manager import GameManager
 
 situations = {
@@ -12,8 +13,8 @@ situations = {
     "conflict_arise": "⛰️"
 }
 
-def game_state():
 
+def game_state():
     st.title(GameManager().get_current_state().location())
     st.write(GameManager().get_current_state().narrative())
     st.divider()
@@ -26,10 +27,12 @@ def game_state():
     if GameManager().get_current_state().action() is not None:
         st.image(situations[GameManager().get_current_state().action()], width=400)
 
-    action = ""
-    st.text_input("Action", value=action, key="action")
-    def on_submit():
-        GameManager().perform_action(st.session_state.action)
-        st.session_state.action = ""
+    with st.form(key="action_form", border=False):
+        action = ""
+        st.text_input("What will you do?", value=action, key="action")
+        st.form_submit_button("Send", on_click=on_submit)
 
-    st.button("Perform Action", on_click=on_submit)
+
+def on_submit():
+    GameManager().perform_action(st.session_state.action)
+    st.session_state.action = ""

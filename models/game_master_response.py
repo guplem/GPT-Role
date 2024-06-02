@@ -1,32 +1,31 @@
-from models.character import Character
 from models.state import GameState
 
 
 class GameMasterResponse:
 
-    def __init__(self, summary:str, characters_updates:[Character], new_state:GameState):
-        self._summary:str = summary
-        self._characters_updates:[Character] = characters_updates
+    def __init__(self, new_state:GameState, dice:int = None, gm_role:str = None):
         self._new_state:GameState = new_state
+        self._dice = dice
+        self._gm_role = gm_role
 
     def __str__(self):
         return f"""
-        Summary: {self._summary}
-        \nNew state: {self._new_state.__str__()}
-        \nCharacters updates: {self._characters_updates}"""
-
-    def summary(self) -> str:
-        return self._summary
-
-    def characters_updates(self) -> [Character]:
-        return self._characters_updates
+        Dice: {self._dice}
+        \nAction: {self._gm_role}
+        \nNew state: {self._new_state.__str__()}"""
 
     def new_state(self) -> GameState:
         return self._new_state
 
     def to_json(self):
         return {
-            "summary": self._summary,
-            "charactersUpdates": [character.to_json() for character in self._characters_updates],
-            "newState": self._new_state.to_json()
+            "dice": self._dice,
+            "action": self._gm_role,
+            "new_state": self._new_state.to_json()
         }
+
+    def dice(self) -> int:
+        return self._dice
+
+    def action(self) -> str:
+        return self._gm_role

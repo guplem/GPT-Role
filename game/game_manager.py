@@ -1,6 +1,5 @@
 from data.data_service import DataService
 from game.game_master_service import GameMasterService
-from models.character import Character
 from models.game_definition import GameDefinition
 from models.game_master_response import GameMasterResponse
 from models.state import GameState
@@ -22,8 +21,7 @@ class GameManager (metaclass=Singleton):
         response:GameMasterResponse = GameMasterService().start_game(game_definition)
 
         DataService().state = response.new_state()
-        DataService().update_characters(response.characters_updates())
-        DataService().save_summary(response.summary())
+        DataService().save_summary(None, response.new_state().narrative())
 
     @staticmethod
     def get_current_state() -> GameState:
@@ -32,16 +30,10 @@ class GameManager (metaclass=Singleton):
     @staticmethod
     def perform_action(action: str) -> None:
         print ("Performing action: " + action)
-        relevant_characters:[Character] = GameManager().get_characters_in_current_location()
-        response:GameMasterResponse = GameMasterService().perform_action(action, relevant_characters, DataService().state, DataService().gameDefinition, DataService().summaries)
+        response:GameMasterResponse = GameMasterService().perform_action(action, DataService().summaries)
 
         DataService().state = response.new_state()
-        DataService().update_characters(response.characters_updates())
-        DataService().save_summary("Player says: " + action + "\n\nGame Master responds: " + response.summary())
-
-    @staticmethod
-    def get_characters_in_current_location() -> [Character]:
-        return DataService().get_characters_of_location(DataService().state.location())
+        DataService().save_summary(action, response.new_state().narrative())
 
     @staticmethod
     def reset_game() -> None:

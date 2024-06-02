@@ -76,7 +76,7 @@ class GameMasterPrompt:
         Provide the user with a context of the world, where he is, what time is it and what is around him. Tell the player the history of it's character. End the narration encouraging player to take an action. 
         Place the player into a specific scene (with more characters if needed) and set up the scene for the player to take an action.
         Allways ask player what he wants to do next.
-        Use between 5 or 6 sentences.
+        Use between 4 or 6 sentences.
     """
 
     GAME_MASTER_TRIVIAL_ACTION_ROLE = """
@@ -101,11 +101,11 @@ class GameMasterPrompt:
         Never create new player actions.
     """
 
-    @staticmethod
-    def character_definition(character_definition: str | None) -> str:
-        if character_definition is None:
-            return ""
-        return f"Playable character that will appear in this game are defined as: {character_definition}"
+    # @staticmethod
+    # def character_definition(character_definition: str | None) -> str:
+    #     if character_definition is None:
+    #         return ""
+    #     return f"Playable character that will appear in this game are defined as: {character_definition}"
 
     @staticmethod
     def objectives(objectives: str | None) -> str:
@@ -129,9 +129,9 @@ class GameMasterPrompt:
     def additional_info(info) -> str:
         return f"Additional information: {info}"
     
-    @staticmethod
-    def relevant_characters(characters) -> str:
-        if characters is None:
-            return ""
-        characters = "\n".join([f"- Character name: {character.name}\n- Character description: {character.description}\n- Character items: {character.inventory}" for character in characters])
-        return f"The story characters that are found on the current location are: {characters}"
+    # @staticmethod
+    # def relevant_characters(characters) -> str:
+    #     if characters is None:
+    #         return ""
+    #     characters = "\n".join([f"- Character name: {character.name}\n- Character description: {character.description}\n- Character items: {character.inventory}" for character in characters])
+    #     return f"The story characters that are found on the current location are: {characters}"
