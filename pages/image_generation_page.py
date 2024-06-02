@@ -1,5 +1,6 @@
 import streamlit as st
 from openai import OpenAI
+from streamlit.commands.page_config import InitialSideBarState
 
 st.set_page_config(
     page_title="GPT-Role",
@@ -12,7 +13,8 @@ st.set_page_config(
        "## Repository\n"
        "[Link to the repository](https://github.com/guplem/GPT-Role)\n"
        "\n"
-    }
+    },
+    initial_sidebar_state="collapsed"
 )
 
 def generate_image(prompt:str, model:str, size:str):

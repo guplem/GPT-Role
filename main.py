@@ -1,4 +1,5 @@
 import streamlit as st
+from streamlit.commands.page_config import InitialSideBarState
 
 from data.data_service import DataService
 
@@ -13,7 +14,8 @@ st.set_page_config(
        "## Repository\n"
        "[Link to the repository](https://github.com/guplem/GPT-Role)\n"
        "\n"
-    }
+    },
+    initial_sidebar_state="collapsed"
 )
 
 st.title("GPT-Role")

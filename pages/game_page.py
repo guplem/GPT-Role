@@ -1,4 +1,5 @@
 import streamlit as st
+from streamlit.commands.page_config import InitialSideBarState
 
 from game.game_manager import GameManager
 from widgets.game_setup_widget import game_setup
@@ -16,7 +17,8 @@ st.set_page_config(
        "## Repository\n"
        "[Link to the repository](https://github.com/guplem/GPT-Role)\n"
        "\n"
-    }
+    },
+    initial_sidebar_state="collapsed"
 )
 
 # If the game Master has the setup done
