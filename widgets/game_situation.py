@@ -15,17 +15,14 @@ situations = {
 
 
 def game_state():
-    st.title(GameManager().get_current_state().location())
-    st.write(GameManager().get_current_state().narrative())
+    st.title(DataService().summaries[-1].player_action())
+    st.write(DataService().state.new_state().narrative())
     st.divider()
-    st.title("Characters in this location:")
-    for character in GameManager().get_characters_in_current_location():
-        st.write(character.name())
-    if GameManager().get_current_state().dice() is not None:
-        st.write(f"You rolled: {GameManager().get_current_state().dice()}")
+    if DataService().state.dice() is not None:
+        st.write(f"You rolled: {DataService().state.dice()}")
 
-    if GameManager().get_current_state().action() is not None:
-        st.image(situations[GameManager().get_current_state().action()], width=400)
+    if DataService().state.action() is not None:
+        st.image(situations[DataService().state.action()], width=400)
 
     with st.form(key="action_form", border=False):
         action = ""

@@ -1,5 +1,4 @@
 import streamlit as st
-from streamlit.commands.page_config import InitialSideBarState
 
 from game.game_manager import GameManager
 from widgets.game_setup_widget import game_setup
