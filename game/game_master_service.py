@@ -1,11 +1,11 @@
 import random
+from typing import Optional
 
 from openai import OpenAI
 from openai.types.chat import ChatCompletion
 
 from data.data_service import DataService
 from game.game_master_prompt import GameMasterPrompt
-from models.character import Character
 from models.game_definition import GameDefinition
 from models.game_master_response import GameMasterResponse
 from models.state import GameState
@@ -63,21 +63,19 @@ class GameMasterService(metaclass=Singleton):
         self.client = OpenAI(api_key=DataService().API_KEY)
         self.game_definition = game_definition
         initial_context = self.__initialize_game_context()
-        return GameMasterResponse(initial_context, [], GameState(initial_context, "start"))
+        return GameMasterResponse(GameState(initial_context))
 
-    def perform_action(self, prompt: str, relevant_characters: [Character], state: GameState,
-                       game_definition: GameDefinition, summaries: [str]) -> GameMasterResponse:
-        result, dice, action = self.call_llm(prompt, game_definition, summaries, relevant_characters)
+    def perform_action(self, action: str, summaries: [str]) -> GameMasterResponse:
+        result, dice, gm_role = self.call_llm(action, summaries)
         # if relevant_characters is not None:
         #     relevant_characters = self.update_characters("\n".join(summaries)+result, relevant_characters, state.location())
-        return GameMasterResponse(result, relevant_characters, GameState(result, "Action", dice, action))
+        return GameMasterResponse(GameState(result), dice, gm_role)
 
-    def call_llm(self, prompt: str, game_definition: GameDefinition, summaries: [str],
-                 relevant_characters: [Character]) -> str:
+    def call_llm(self, prompt: str, summaries: [str]) -> (str, Optional[int], str):
         summary = "".join([summary+"\n" for summary in summaries])
         # This is effectively telling ChatGPT what we're going to use its JSON output for.
         # The request to the ChatGPT API.
-        response = self.client.chat.completions.create(
+        function_chosen = self.client.chat.completions.create(
             model=model_llm,
             messages=[
                 {
@@ -88,7 +86,6 @@ class GameMasterService(metaclass=Singleton):
                         f"{GameMasterPrompt.year(self.game_definition.year())}"
                         f"{GameMasterPrompt.objectives(self.game_definition.objectives())}"
                         f"{GameMasterPrompt.additional_info(self.game_definition.additional_info())}"
-                        f"{GameMasterPrompt.character_definition(relevant_characters)}."
                         f"In this world, the things that have happened before are: " + summary
                 },
                 {"role": "user", "content": f"{prompt}"}
@@ -97,10 +94,12 @@ class GameMasterService(metaclass=Singleton):
             tool_choice="required"
         )
 
-        response2, dice = getattr(self, response.choices[0].message.tool_calls[0].function.name)(prompt, summary)
-        return response2.choices[0].message.content, dice, response.choices[0].message.tool_calls[0].function.name
+        function_name = function_chosen.choices[0].message.tool_calls[0].function.name
 
-    def conflict(self, prompt: str, summary: str) -> ChatCompletion:
+        game_master_response, dice = getattr(self, function_name)(prompt, summary)
+        return game_master_response.choices[0].message.content, dice, function_name
+
+    def conflict(self, prompt: str, summary: str) -> (ChatCompletion, Optional[int]):
         dice = random.randint(1, 20)
         print("[GAME_MASTER_SERVICE] Executing conflict", dice)
         messages = [
@@ -121,7 +120,7 @@ class GameMasterService(metaclass=Singleton):
         )
         return response, dice
 
-    def trivial_action(self, prompt: str, summary: str) -> ChatCompletion:
+    def trivial_action(self, prompt: str, summary: str) -> (ChatCompletion, Optional[int]):
         print("[GAME_MASTER_SERVICE] Executing trivial_action")
         messages = [
             {
@@ -140,7 +139,7 @@ class GameMasterService(metaclass=Singleton):
         )
         return response, None
 
-    def role_playing(self, prompt: str, summary: str) -> ChatCompletion:
+    def role_playing(self, prompt: str, summary: str) -> (ChatCompletion, Optional[int]):
         print("[GAME_MASTER_SERVICE] Executing role play")
 
         messages = [
@@ -160,7 +159,7 @@ class GameMasterService(metaclass=Singleton):
         )
         return response, None
 
-    def story_telling(self, prompt: str, summary: str) -> ChatCompletion:
+    def story_telling(self, prompt: str, summary: str) -> (ChatCompletion, Optional[int]):
         print("[GAME_MASTER_SERVICE] Executing story telling")
 
         messages = [
@@ -192,7 +191,6 @@ class GameMasterService(metaclass=Singleton):
                     f"{GameMasterPrompt.year(self.game_definition.year())}"
                     f"{GameMasterPrompt.objectives(self.game_definition.objectives())}"
                     f"{GameMasterPrompt.additional_info(self.game_definition.additional_info())}"
-                    f"{GameMasterPrompt.character_definition(self.game_definition.character_definition())}."
             },
         ]
         response = self.client.chat.completions.create(
@@ -202,7 +200,7 @@ class GameMasterService(metaclass=Singleton):
 
         return response.choices[0].message.content
 
-    def game_question(self, prompt: str, summary: str) -> ChatCompletion:
+    def game_question(self, prompt: str, summary: str) -> (ChatCompletion, Optional[int]):
         print("[GAME_MASTER_SERVICE] Executing game_question")
         messages = [
             {
@@ -222,7 +220,7 @@ class GameMasterService(metaclass=Singleton):
         )
         return response, None
 
-    def impossible_action(self, prompt: str, summary: str) -> ChatCompletion:
+    def impossible_action(self, prompt: str, summary: str) -> (ChatCompletion, Optional[int]):
         print("[GAME_MASTER_SERVICE] Executing impossible_action")
         messages = [
             {
@@ -241,7 +239,7 @@ class GameMasterService(metaclass=Singleton):
         )
         return response, None
 
-    def conflict_arise(self, prompt: str, summary: str) -> ChatCompletion:
+    def conflict_arise(self, prompt: str, summary: str) -> (ChatCompletion, Optional[int]):
         print("[GAME_MASTER_SERVICE] Executing conflict_arise")
         messages = [
             {
@@ -262,32 +260,32 @@ class GameMasterService(metaclass=Singleton):
         )
         return response, None
     
-    def update_characters(self, answer, characters: [Character], location) -> ChatCompletion:
-        print("[GAME_MASTER_SERVICE] Updating characters")
-        # Use chat gpt to see if a character from the list should be updated because of the action in the answer
-
-        characters = [character.__dict__ for character in characters]
-        messages = [
-            {
-                "role": "system",
-                "content": "You are bot in charge of updating a list of dictionaries with new information. "
-                           "You always receive a list of dictionaries with characters and you have to update them based on new information. "
-                           "Only update description if there is something relevant to be added/removed/updated from the current character description."
-                           "You can only answer with the list of characters. "
-                           "It is possible that some parts of the json need to be updated while keeping meaningful information."
-                           "If it appears a character that is not in the list it needs to be created considering the following attributes: {name:str, description:str, location:str, inventory:[str]}. All attributes are mandatory."
-                           "The character can be created only if the name, description and location are explicitly said on the text."
-                           f"The current location is: {location}."
-            },
-            {"role": "user",
-             "content": f"This is my list of characters: {characters}\nThis is the new information: {answer}."},
-        ]
-        response = self.client.chat.completions.create(
-            model=model_llm,
-            messages=messages,
-        )
-        print(response.choices[0].message.content)
-        return [Character(**character) for character in eval(response.choices[0].message.content)]
+    # def update_characters(self, answer, characters: [Character], location) -> ChatCompletion:
+    #     print("[GAME_MASTER_SERVICE] Updating characters")
+    #     # Use chat gpt to see if a character from the list should be updated because of the action in the answer
+    #
+    #     characters = [character.__dict__ for character in characters]
+    #     messages = [
+    #         {
+    #             "role": "system",
+    #             "content": "You are bot in charge of updating a list of dictionaries with new information. "
+    #                        "You always receive a list of dictionaries with characters and you have to update them based on new information. "
+    #                        "Only update description if there is something relevant to be added/removed/updated from the current character description."
+    #                        "You can only answer with the list of characters. "
+    #                        "It is possible that some parts of the json need to be updated while keeping meaningful information."
+    #                        "If it appears a character that is not in the list it needs to be created considering the following attributes: {name:str, description:str, location:str, inventory:[str]}. All attributes are mandatory."
+    #                        "The character can be created only if the name, description and location are explicitly said on the text."
+    #                        f"The current location is: {location}."
+    #         },
+    #         {"role": "user",
+    #          "content": f"This is my list of characters: {characters}\nThis is the new information: {answer}."},
+    #     ]
+    #     response = self.client.chat.completions.create(
+    #         model=model_llm,
+    #         messages=messages,
+    #     )
+    #     print(response.choices[0].message.content)
+    #     return [Character(**character) for character in eval(response.choices[0].message.content)]
     
     def generate_image(self, prompt:str):
         response = self.client.images.generate(
