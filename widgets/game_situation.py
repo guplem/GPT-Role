@@ -10,19 +10,18 @@ situations = {
     "role_playing": "💬",
     "story_telling": "📖",
     "game_question": "❔",
-    "conflict_arise": "⛰️"
+    "conflict_arise": "🔥"
 }
 
 
 def game_state():
-    st.title(DataService().history()[-1].player_action())
+    emoji = situations.get(DataService().last_response().action(), "🌍")
+    title = DataService().history()[-1].player_action() or "World setup..."
+    st.header(emoji + " " + title)
     st.write(DataService().last_response().new_state().narrative())
     st.divider()
     if DataService().last_response().dice() is not None:
         st.write(f"You rolled: {DataService().last_response().dice()}")
-
-    if DataService().last_response().action() is not None:
-        st.image(situations[DataService().last_response().action()], width=400)
 
     with st.form(key="action_form", border=False):
         action = ""
