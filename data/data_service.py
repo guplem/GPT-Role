@@ -34,7 +34,8 @@ class DataService(metaclass=Singleton):
     def __save_history(self, action:Optional[str], summary:str) -> None:
         turn = Turn(action, summary)
         self.__history.append(turn)
-        print("History: " + str(self.__history))
+        print("History: " + str(self.__history
+                                ))
 
     def history(self) -> [Turn]:
         return self.__history

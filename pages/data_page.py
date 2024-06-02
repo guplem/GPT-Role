@@ -1,6 +1,7 @@
 import streamlit as st
 
 from data.data_service import DataService
+from models.turn import Turn
 
 
 st.set_page_config(
@@ -32,8 +33,12 @@ st.write(DataService().game_definition().__str__())
 st.divider()
 
 if DataService().history() is not None:
-    reversed_history = DataService().history().reverse()
+    reversed_history:[Turn] = DataService().history().reverse()
     if reversed_history is not None:
         st.title("History")
         for summary in reversed_history:
-            st.write(summary)
+            st.write(summary.player_action())
+            st.write(summary.game_master_response())
+            st.divider()
+    else:
+        st.write("No history yet, start playing!")
