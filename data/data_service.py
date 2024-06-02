@@ -25,21 +25,17 @@ class DataService(metaclass=Singleton):
         return self.__API_KEY
 
     def set_api_key(self, key:str):
-        print("Setting API KEY to: " + key)
         self.__API_KEY = key
 
     def save_game_master_response(self, response:GameMasterResponse, player_action:Optional[str]):
         self.__gameStarted = True
         self.__last_response = response
         self.__save_history(player_action, response.new_state().narrative())
-        print ("New STATE: " +  self.__last_response.new_state().narrative())
 
 
     def __save_history(self, action:Optional[str], summary:str) -> None:
         turn = Turn(action, summary)
         self.__history.append(turn)
-        print("History: " + str(self.__history
-                                ))
 
     def history(self) -> [Turn]:
         return self.__history
