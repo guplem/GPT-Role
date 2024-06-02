@@ -1,5 +1,6 @@
 import streamlit as st
 
+from data.data_service import DataService
 from game.game_manager import GameManager
 from widgets.game_setup_widget import game_setup
 from widgets.game_situation import game_state
@@ -21,7 +22,7 @@ st.set_page_config(
 )
 
 # If the game Master has the setup done
-if not GameManager().is_game_started():
+if not DataService().game_started():
     game_setup()
 
 else:

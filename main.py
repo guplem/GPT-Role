@@ -22,7 +22,7 @@ st.write("Welcome to GPT-Role, a game where you and an AI will create a story to
 
 st.divider()
 
-key = st.text_input("OpenAI API key", value=DataService().API_KEY, type="password")
+key = st.text_input("OpenAI API key", value=DataService().api_key(), type="password")
 
 if key is None or len(key) == 0 or key == "":
     st.warning("Please provide an OpenAI API key to start the game.")

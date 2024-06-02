@@ -1,7 +1,6 @@
 import streamlit as st
 
 from data.data_service import DataService
-from game.game_manager import GameManager
 
 
 st.set_page_config(
@@ -19,18 +18,11 @@ st.set_page_config(
     initial_sidebar_state="collapsed"
 )
 
-st.title("Game Data Page")
-if st.button("Rebuild Page"):
-    st.rerun()
+st.title("Game Description")
+st.write(DataService().game_definition().__str__())
+
 st.divider()
-st.write("Setup Done: ", GameManager().is_game_started())
 
-st.title("Game Definition")
-st.write(DataService().gameDefinition.__str__())
-
-st.title("Current State")
-st.write(DataService().state.__str__())
-
-st.title("Summary")
-for summary in DataService().summaries:
+st.title("History")
+for summary in DataService().history().reverse():
     st.write(summary)

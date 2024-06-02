@@ -9,15 +9,15 @@ def game_setup():
 
     def accept_suggestion():
         if not st.session_state["characterDefinition"]:
-            st.session_state["characterDefinition"] = DataService().game_definition_suggestion.character_definition()
+            st.session_state["characterDefinition"] = DataService().game_definition_suggestion().character_definition()
         if not st.session_state["year"]:
-            st.session_state["year"] = DataService().game_definition_suggestion.year()
+            st.session_state["year"] = DataService().game_definition_suggestion().year()
         if not st.session_state["theme"]:
-            st.session_state["theme"] = DataService().game_definition_suggestion.theme()
+            st.session_state["theme"] = DataService().game_definition_suggestion().theme()
         if not st.session_state["objective"]:
-            st.session_state["objective"] = DataService().game_definition_suggestion.objectives()
+            st.session_state["objective"] = DataService().game_definition_suggestion().objectives()
         if not st.session_state["additionalInfo"]:
-            st.session_state["additionalInfo"] = DataService().game_definition_suggestion.additional_info()
+            st.session_state["additionalInfo"] = DataService().game_definition_suggestion().additional_info()
 
     def clear():
         st.session_state["characterDefinition"] = ""
@@ -38,11 +38,11 @@ def game_setup():
     with col3:
         st.button("Clear", on_click= clear)
 
-    st.text_area("Character Definition", key="characterDefinition", placeholder=DataService().game_definition_suggestion.character_definition())
-    st.text_input("Year", key="year", placeholder=DataService().game_definition_suggestion.year())
-    st.text_input("Theme", key="theme", placeholder=DataService().game_definition_suggestion.theme())
-    st.text_input("Objective", key="objective", placeholder=DataService().game_definition_suggestion.objectives())
-    st.text_area("Additional Info", key="additionalInfo", placeholder=DataService().game_definition_suggestion.additional_info())
+    st.text_area("Character Definition", key="characterDefinition", placeholder=DataService().game_definition_suggestion().character_definition())
+    st.text_input("Year", key="year", placeholder=DataService().game_definition_suggestion().year())
+    st.text_input("Theme", key="theme", placeholder=DataService().game_definition_suggestion().theme())
+    st.text_input("Objective", key="objective", placeholder=DataService().game_definition_suggestion().objectives())
+    st.text_area("Additional Info", key="additionalInfo", placeholder=DataService().game_definition_suggestion().additional_info())
 
     def on_submit():
         GameManager().start_game(GameDefinition(st.session_state["characterDefinition"], st.session_state["year"], st.session_state["theme"], st.session_state["objective"], st.session_state["additionalInfo"]))

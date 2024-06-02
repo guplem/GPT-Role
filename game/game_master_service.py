@@ -60,7 +60,7 @@ class GameMasterService(metaclass=Singleton):
     _instance = None
 
     def start_game(self, game_definition: GameDefinition) -> GameMasterResponse:
-        self.client = OpenAI(api_key=DataService().API_KEY)
+        self.client = OpenAI(api_key=DataService().api_key())
         self.game_definition = game_definition
         initial_context = self.__initialize_game_context()
         return GameMasterResponse(GameState(initial_context))

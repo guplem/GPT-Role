@@ -6,11 +6,6 @@ from utils.singleton import Singleton
 
 class GameManager (metaclass=Singleton):
 
-
-    @staticmethod
-    def is_game_started()-> bool:
-        return DataService().gameStarted
-
     @staticmethod
     def start_game(game_definition: GameDefinition) -> None:
         print ("Starting game...")
@@ -19,16 +14,15 @@ class GameManager (metaclass=Singleton):
 
         response:GameMasterResponse = GameMasterService().start_game(game_definition)
 
-        DataService().state = response.new_state()
-        DataService().save_summary(None, response.new_state().narrative())
+        DataService().set_new_game_master_response(response, None)
+
 
     @staticmethod
     def perform_action(action: str) -> None:
         print ("Performing action: " + action)
-        response:GameMasterResponse = GameMasterService().perform_action(action, DataService().summaries)
+        response:GameMasterResponse = GameMasterService().perform_action(action, DataService().history())
 
-        DataService().state = response.new_state()
-        DataService().save_summary(action, response.new_state().narrative())
+        DataService().set_new_game_master_response(response, action)
 
     @staticmethod
     def reset_game() -> None:

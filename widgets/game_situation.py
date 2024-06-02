@@ -15,14 +15,14 @@ situations = {
 
 
 def game_state():
-    st.title(DataService().summaries[-1].player_action())
-    st.write(DataService().state.new_state().narrative())
+    st.title(DataService().history()[-1].player_action())
+    st.write(DataService().last_response().new_state().narrative())
     st.divider()
-    if DataService().state.dice() is not None:
-        st.write(f"You rolled: {DataService().state.dice()}")
+    if DataService().last_response().dice() is not None:
+        st.write(f"You rolled: {DataService().last_response().dice()}")
 
-    if DataService().state.action() is not None:
-        st.image(situations[DataService().state.action()], width=400)
+    if DataService().last_response().action() is not None:
+        st.image(situations[DataService().last_response().action()], width=400)
 
     with st.form(key="action_form", border=False):
         action = ""

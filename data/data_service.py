@@ -14,25 +14,51 @@ from utils.singleton import Singleton
 class DataService(metaclass=Singleton):
 
     def __init__(self):
-        self.gameDefinition:Optional[GameDefinition] = None
-        self.gameStarted:bool = False
-        self.state:GameMasterResponse = GameMasterResponse(GameState("Welcome to the game"))
-        self.summaries:[Turn] = []
+        self.__gameDefinition:Optional[GameDefinition] = None
+        self.__gameStarted:bool = False
+        self.__last_response:GameMasterResponse = GameMasterResponse(GameState("Welcome to the game"))
+        self.__history:[Turn] = []
         load_dotenv()
-        self.API_KEY = os.getenv("OPENAI_API_KEY")
+        self.__API_KEY = os.getenv("OPENAI_API_KEY")
 
-    def save_summary(self, action:Optional[str], summary:str) -> None:
+    def api_key(self):
+        return self.__API_KEY
+
+    def set_new_game_master_response(self, response:GameMasterResponse, player_action:Optional[str]):
+        self.__last_response = response
+        self.__save_history(player_action, response.new_state().narrative())
+
+
+    def __save_history(self, action:Optional[str], summary:str) -> None:
         turn = Turn(action, summary)
-        self.summaries.append(turn)
+        self.__history.append(turn)
 
-    game_definition_suggestion: GameDefinition = random.choice(example_game_definitions)
+    def history(self):
+        return self.__history
+
+    def last_response(self):
+        return self.__last_response
+
+    def game_definition(self):
+        return self.__gameDefinition
+
+    def game_started(self):
+        return self.__gameStarted
+
+    __game_definition_suggestion: GameDefinition = random.choice(example_game_definitions)
 
     def change_game_definition_suggestion(self):
-        self.game_definition_suggestion = random.choice(example_game_definitions)
+        self.__game_definition_suggestion = random.choice(example_game_definitions)
+
+    def game_definition_suggestion(self):
+        return self.__game_definition_suggestion
 
     def reset_game(self):
-        self.gameDefinition = None
-        self.gameStarted = False
-        self.state = GameMasterResponse(GameState("Welcome to the game"))
-        self.summaries = []
+        self.__gameDefinition = None
+        self.__gameStarted = False
+        self.__last_response = GameMasterResponse(GameState("Welcome to the game"))
+        self.__history = []
+
+
+
 

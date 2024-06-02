@@ -1,6 +1,5 @@
 import streamlit as st
 from openai import OpenAI
-from streamlit.commands.page_config import InitialSideBarState
 
 st.set_page_config(
     page_title="GPT-Role",
