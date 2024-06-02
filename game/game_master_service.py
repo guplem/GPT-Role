@@ -11,7 +11,9 @@ from models.game_master_response import GameMasterResponse
 from models.state import GameState
 from utils.singleton import Singleton
 
-model = "gpt-3.5-turbo"
+model_llm = "gpt-3.5-turbo"
+model_image = "dall-e-3"
+
 
 
 class GameMasterService(metaclass=Singleton):
@@ -76,7 +78,7 @@ class GameMasterService(metaclass=Singleton):
         # This is effectively telling ChatGPT what we're going to use its JSON output for.
         # The request to the ChatGPT API.
         response = self.client.chat.completions.create(
-            model="gpt-3.5-turbo",
+            model=model_llm,
             messages=[
                 {
                     "role": "system",
@@ -114,7 +116,7 @@ class GameMasterService(metaclass=Singleton):
             {"role": "user",
              "content": f"{prompt}\nI rolled a d20 dice and I got this number: {dice}"}]
         response = self.client.chat.completions.create(
-            model=model,
+            model=model_llm,
             messages=messages,
         )
         return response
@@ -133,7 +135,7 @@ class GameMasterService(metaclass=Singleton):
             {"role": "user",
              "content": f"{prompt}"}]
         response = self.client.chat.completions.create(
-            model=model,
+            model=model_llm,
             messages=messages,
         )
         return response
@@ -153,7 +155,7 @@ class GameMasterService(metaclass=Singleton):
             {"role": "user",
              "content": f"{prompt}"}]
         response = self.client.chat.completions.create(
-            model=model,
+            model=model_llm,
             messages=messages,
         )
         return response
@@ -173,7 +175,7 @@ class GameMasterService(metaclass=Singleton):
             {"role": "user",
              "content": f"{prompt}"}]
         response = self.client.chat.completions.create(
-            model="gpt-3.5-turbo",
+            model=model_llm,
             messages=messages,
         )
         return response
@@ -194,7 +196,7 @@ class GameMasterService(metaclass=Singleton):
             },
         ]
         response = self.client.chat.completions.create(
-            model=model,
+            model=model_llm,
             messages=messages,
         )
 
@@ -215,7 +217,7 @@ class GameMasterService(metaclass=Singleton):
             {"role": "user",
              "content": f"{prompt}"}]
         response = self.client.chat.completions.create(
-            model=model,
+            model=model_llm,
             messages=messages,
         )
         return response
@@ -234,7 +236,7 @@ class GameMasterService(metaclass=Singleton):
             {"role": "user",
              "content": f"{prompt}"}]
         response = self.client.chat.completions.create(
-            model=model,
+            model=model_llm,
             messages=messages,
         )
         return response
@@ -255,7 +257,7 @@ class GameMasterService(metaclass=Singleton):
             {"role": "user",
              "content": f"{prompt}"}]
         response = self.client.chat.completions.create(
-            model=model,
+            model=model_llm,
             messages=messages,
         )
         return response
@@ -281,9 +283,20 @@ class GameMasterService(metaclass=Singleton):
              "content": f"This is my list of characters: {characters}\nThis is the new information: {answer}."},
         ]
         response = self.client.chat.completions.create(
-            model=model,
+            model=model_llm,
             messages=messages,
         )
         print(response.choices[0].message.content)
         return [Character(**character) for character in eval(response.choices[0].message.content)]
+    
+    def generate_image(self, prompt:str):
+        response = self.client.images.generate(
+            model=model_image,
+            prompt=prompt,
+            size="1024x1024",
+            quality="standard",
+            n=1,
+        )
+
+        return response.data[0].url
 # Path: models/game_master_response.py
