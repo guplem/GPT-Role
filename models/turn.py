@@ -21,6 +21,12 @@ class Turn:
             "player_action": self._player_action,
             "gm_response": self._game_master_response
         }
+    
+    def from_json(json):
+        return Turn(
+            json["player_action"],
+            json["gm_response"]
+        )
 
     def to_json_string(self):
         return json.dumps(self.to_json())

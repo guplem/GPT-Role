@@ -25,6 +25,10 @@ if DataService().game_started() is False:
     st.write("Currently there is no game in progress.")
     if st.button("Start a new game"):
         st.switch_page("pages/game.py")
+    uploaded_file = st.file_uploader("Upload a previous game file")
+    if uploaded_file is not None:
+        # To read file as bytes:
+        DataService().load_game(uploaded_file)
 else:
 
     st.title("Game Description")
@@ -46,12 +50,19 @@ else:
             )
             st.divider()
         
-        st.download_button(
-            label="Save Game",
-            file_name="GPT-Role_game.json",
-            mime="application/json",
-            data=json.dumps(DataService().save_game())
-        )
+        left_co, right_col = st.columns(2)
+        with left_co:
+            st.download_button(
+                label="Save Game",
+                file_name="GPT-Role_game.json",
+                mime="application/json",
+                data=DataService().save_game()
+            )
+        with right_col:
+            uploaded_file = st.file_uploader("Choose a file")
+            if uploaded_file is not None:
+                # To read file as bytes:
+                DataService().load_game(uploaded_file)
 
     else:
         st.write("No history yet, start playing!")

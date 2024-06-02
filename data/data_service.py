@@ -1,6 +1,8 @@
 import os
 import random
 from typing import Optional
+from io import StringIO
+import json
 
 from dotenv import load_dotenv
 
@@ -74,5 +76,14 @@ class DataService(metaclass=Singleton):
             "last_response": self.__last_response.to_json(),
             "history": [history.to_json() for history in self.__history]
         }
-        print(game_data)
-        return game_data
+        return json.dumps(game_data)
+    
+    def load_game(self, uploaded_file) -> None:
+        stringio = StringIO(uploaded_file.getvalue().decode("utf-8"))
+        # To read file as string:
+        string_data = stringio.read()
+        game_data = json.loads(string_data)
+        self.__gameDefinition = GameDefinition.from_json(game_data["game_definition"])
+        self.__gameStarted = game_data["game_started"]
+        self.__last_response = GameMasterResponse.from_json(game_data["last_response"])
+        self.__history = [Turn.from_json(turn) for turn in game_data["history"]]

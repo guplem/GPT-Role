@@ -38,6 +38,15 @@ class GameDefinition:
             "objective": self._objective,
             "additionalInfo": self._additionalInfo
         }
+    
+    def from_json(json):
+        return GameDefinition(
+            json["characterDefinition"],
+            json["year"],
+            json["theme"],
+            json["objective"],
+            json["additionalInfo"]
+        )
 
     def as_markdown(self):
         return f"""

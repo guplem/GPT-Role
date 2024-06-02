@@ -15,3 +15,8 @@ class GameState:
         return {
             "narrative": self._narrative
         }
+    
+    def from_json(json):
+        return GameState(
+            json["narrative"]
+        )

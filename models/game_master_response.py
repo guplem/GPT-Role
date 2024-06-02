@@ -23,6 +23,13 @@ class GameMasterResponse:
             "action": self._gm_role,
             "new_state": self._new_state.to_json()
         }
+    
+    def from_json(json):
+        return GameMasterResponse(
+            GameState.from_json(json["new_state"]),
+            json["dice"],
+            json["action"]
+        )
 
     def dice(self) -> int:
         return self._dice
