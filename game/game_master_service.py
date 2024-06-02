@@ -9,6 +9,7 @@ from game.game_master_prompt import GameMasterPrompt
 from models.game_definition import GameDefinition
 from models.game_master_response import GameMasterResponse
 from models.state import GameState
+from models.turn import Turn
 from utils.singleton import Singleton
 
 model_llm = "gpt-3.5-turbo"
@@ -65,14 +66,14 @@ class GameMasterService(metaclass=Singleton):
         initial_context = self.__initialize_game_context()
         return GameMasterResponse(GameState(initial_context))
 
-    def perform_action(self, action: str, summaries: [str]) -> GameMasterResponse:
-        result, dice, gm_role = self.call_llm(action, summaries)
+    def perform_action(self, action: str, history: [Turn]) -> GameMasterResponse:
+        result, dice, gm_role = self.call_llm(action, history)
         # if relevant_characters is not None:
         #     relevant_characters = self.update_characters("\n".join(summaries)+result, relevant_characters, state.location())
         return GameMasterResponse(GameState(result), dice, gm_role)
 
-    def call_llm(self, prompt: str, summaries: [str]) -> (str, Optional[int], str):
-        summary = "".join([summary+"\n" for summary in summaries])
+    def call_llm(self, prompt: str, history: [Turn]) -> (str, Optional[int], str):
+        summary = "".join([summary.to_json() +"\n" for summary in history])
         # This is effectively telling ChatGPT what we're going to use its JSON output for.
         # The request to the ChatGPT API.
         function_chosen = self.client.chat.completions.create(

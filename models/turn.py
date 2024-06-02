@@ -14,3 +14,9 @@ class Turn:
 
     def game_master_response(self) -> str:
         return self._game_master_response
+
+    def to_json(self):
+        return {
+            "player_action": self._player_action,
+            "gm_response": self._game_master_response
+        }
