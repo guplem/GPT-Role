@@ -40,7 +40,12 @@ class GameMasterService(metaclass=Singleton):
          "function": {
              "name": "game_question",
              "description": GameMasterPrompt.GAME_QUESTION
-         }}
+         }},
+        {"type": "function",
+         "function": {
+             "name": "impossible_action",
+             "description": GameMasterPrompt.IMPOSSIBLE_ACTION
+         }},
     ]
 
     game_definition: GameDefinition
@@ -198,6 +203,25 @@ class GameMasterService(metaclass=Singleton):
                 "content":
                     f"{GameMasterPrompt.GAME_MASTER_GAME_QUESTION_ROLE}"
                     f"{GameMasterPrompt.GAME_MECHANICS}"
+                    # f"{GameMasterPrompt.relevant_characters(self.game_definition.relevant_characters())}."
+             },
+            {"role": "assistant",
+             "content": f"In this world, the things that have happened before are:\n{summary}"},
+            {"role": "user",
+             "content": f"{prompt}"}]
+        response = self.client.chat.completions.create(
+            model=model,
+            messages=messages,
+        )
+        return response
+
+    def impossible_action(self, prompt: str, summary: str) -> ChatCompletion:
+        print("[GAME_MASTER_SERVICE] Executing impossible_action")
+        messages = [
+            {
+                "role": "system",
+                "content":
+                    f"{GameMasterPrompt.GAME_MASTER_IMPOSSIBLE_ACTION_ROLE}"
                     # f"{GameMasterPrompt.relevant_characters(self.game_definition.relevant_characters())}."
              },
             {"role": "assistant",

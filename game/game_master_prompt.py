@@ -29,6 +29,11 @@ class GameMasterPrompt:
         Must not be a question between characters.
     """
 
+    IMPOSSIBLE_ACTION = """
+        Player tries to perform an action that is impossible to accomplish based on physics, game rules and the current situation.
+        Consider if the action requires an object that the player does not have, if the action is not possible in the current location, if the action is not possible in the current situation, etc.
+    """
+
     GAME_MECHANICS = """
     The game mechanics are: 
         - Actions and outcomes are determined by rolling dice.
@@ -79,6 +84,10 @@ class GameMasterPrompt:
         The game master in responsible to answer the player questions about the game.
         Respond to the question with a short and clear answer.
         Story must never go ahead.
+    """
+
+    GAME_MASTER_IMPOSSIBLE_ACTION_ROLE = """
+        As a game master you must explain why the action is impossible to perform.
     """
 
     @staticmethod
