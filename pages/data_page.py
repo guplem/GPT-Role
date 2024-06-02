@@ -31,14 +31,18 @@ st.title("Game Description")
 st.write(DataService().game_definition().__str__())
 
 st.divider()
+st.markdown("#####")
 
 if DataService().history() is not None:
-    reversed_history:[Turn] = DataService().history().reverse()
-    if reversed_history is not None:
-        st.title("History")
-        for summary in reversed_history:
-            st.write(summary.player_action())
-            st.write(summary.game_master_response())
-            st.divider()
-    else:
-        st.write("No history yet, start playing!")
+    st.title("History")
+    for summary in reversed(DataService().history()):
+        if summary.player_action() is not None:
+            st.markdown(
+            "##### Player Action\n" + summary.player_action()
+            )
+        st.markdown(
+        "##### Game Master\n" + summary.game_master_response()
+        )
+        st.divider()
+else:
+    st.write("No history yet, start playing!")
