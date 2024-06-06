@@ -1,6 +1,7 @@
+from __future__ import annotations
+
 import json
 from typing import Optional
-
 
 class Turn:
 
@@ -21,11 +22,12 @@ class Turn:
             "player_action": self._player_action,
             "gm_response": self._game_master_response
         }
-    
-    def from_json(json):
+
+    @staticmethod
+    def from_json(data: dict) -> Turn:
         return Turn(
-            json["player_action"],
-            json["gm_response"]
+            data["player_action"],
+            data["gm_response"]
         )
 
     def to_json_string(self):

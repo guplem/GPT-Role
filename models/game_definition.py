@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 class GameDefinition:
     def __init__(self,  character_definition, year, theme, objective, additional_info):
         self._character_definition = character_definition
@@ -6,7 +8,7 @@ class GameDefinition:
         self._objective = objective
         self._additionalInfo = additional_info
 
-    def __str__(self):
+    def __str__(self) -> str:
         return f"""
         Character definition: {self._character_definition}
         \nYear: {self._year}
@@ -30,7 +32,7 @@ class GameDefinition:
     def additional_info(self) -> str:
         return self._additionalInfo
 
-    def to_json(self):
+    def to_json(self) -> dict:
         return {
             "characterDefinition": self._character_definition,
             "year": self._year,
@@ -38,17 +40,18 @@ class GameDefinition:
             "objective": self._objective,
             "additionalInfo": self._additionalInfo
         }
-    
-    def from_json(json):
+
+    @staticmethod
+    def from_json(data: dict) -> GameDefinition:
         return GameDefinition(
-            json["characterDefinition"],
-            json["year"],
-            json["theme"],
-            json["objective"],
-            json["additionalInfo"]
+            data["characterDefinition"],
+            data["year"],
+            data["theme"],
+            data["objective"],
+            data["additionalInfo"]
         )
 
-    def as_markdown(self):
+    def as_markdown(self) -> str:
         return f"""
         **Character Definition:** {self._character_definition}
         \n**Year:** {self._year}

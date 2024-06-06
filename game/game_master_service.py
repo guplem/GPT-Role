@@ -261,33 +261,6 @@ class GameMasterService(metaclass=Singleton):
         )
         return response, None
     
-    # def update_characters(self, answer, characters: [Character], location) -> ChatCompletion:
-    #     print("[GAME_MASTER_SERVICE] Updating characters")
-    #     # Use chat gpt to see if a character from the list should be updated because of the action in the answer
-    #
-    #     characters = [character.__dict__ for character in characters]
-    #     messages = [
-    #         {
-    #             "role": "system",
-    #             "content": "You are bot in charge of updating a list of dictionaries with new information. "
-    #                        "You always receive a list of dictionaries with characters and you have to update them based on new information. "
-    #                        "Only update description if there is something relevant to be added/removed/updated from the current character description."
-    #                        "You can only answer with the list of characters. "
-    #                        "It is possible that some parts of the json need to be updated while keeping meaningful information."
-    #                        "If it appears a character that is not in the list it needs to be created considering the following attributes: {name:str, description:str, location:str, inventory:[str]}. All attributes are mandatory."
-    #                        "The character can be created only if the name, description and location are explicitly said on the text."
-    #                        f"The current location is: {location}."
-    #         },
-    #         {"role": "user",
-    #          "content": f"This is my list of characters: {characters}\nThis is the new information: {answer}."},
-    #     ]
-    #     response = self.client.chat.completions.create(
-    #         model=model_llm,
-    #         messages=messages,
-    #     )
-    #     print(response.choices[0].message.content)
-    #     return [Character(**character) for character in eval(response.choices[0].message.content)]
-    
     def generate_image(self, prompt:str):
         response = self.client.images.generate(
             model=model_image,

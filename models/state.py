@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 class GameState:
 
     def __init__(self, narrative:str):
@@ -15,8 +17,9 @@ class GameState:
         return {
             "narrative": self._narrative
         }
-    
-    def from_json(json):
+
+    @staticmethod
+    def from_json(data: dict) -> GameState:
         return GameState(
-            json["narrative"]
+            data["narrative"]
         )

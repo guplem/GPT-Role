@@ -26,10 +26,10 @@ class DataService(metaclass=Singleton):
     def api_key(self) -> Optional[str]:
         return self.__API_KEY
 
-    def set_api_key(self, key:str):
+    def set_api_key(self, key:str) -> None:
         self.__API_KEY = key
 
-    def save_game_master_response(self, response:GameMasterResponse, player_action:Optional[str]):
+    def save_game_master_response(self, response:GameMasterResponse, player_action:Optional[str]) -> None:
         self.__gameStarted = True
         self.__last_response = response
         self.__save_history(player_action, response.new_state().narrative())
@@ -69,7 +69,7 @@ class DataService(metaclass=Singleton):
         self.__gameDefinition = game_definition
         self.__gameStarted = True
 
-    def save_game(self) -> dict:
+    def save_game(self) -> str:
         game_data = {
             "game_definition": self.__gameDefinition.to_json(),
             "game_started": self.__gameStarted,

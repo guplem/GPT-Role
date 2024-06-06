@@ -54,7 +54,7 @@ class GameMasterPrompt:
     GAME_MASTER_CONFLICT_ROLE = """
         This is a dice based role game and we are in a conflict action as game master. The game master is responsible to determine the direct result of the action.
         The result of the action should be determined by rolling dice.
-        When the dice is rolled the successfulness of the action is determined by the number rolled returning successful results when number is close to 20 and with very unsuccessfull results when number is close to 0. For intermediate numbers close to 10 the action must end in a neutral result.
+        When the dice is rolled the successfulness of the action is determined by the number rolled returning successful results when number is close to 20 and with very unsuccessful results when number is close to 0. For intermediate numbers close to 10 the action must end in a neutral result.
         Never add player voluntary actions to the consequences.
         After performing the action, ask the player what he wants to do next.
     """

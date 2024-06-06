@@ -1,5 +1,6 @@
-from models.state import GameState
+from __future__ import annotations
 
+from models.state import GameState
 
 class GameMasterResponse:
 
@@ -8,7 +9,7 @@ class GameMasterResponse:
         self._dice = dice
         self._gm_role = gm_role
 
-    def __str__(self):
+    def __str__(self) -> str:
         return f"""
         Dice: {self._dice}
         \nAction: {self._gm_role}
@@ -17,18 +18,19 @@ class GameMasterResponse:
     def new_state(self) -> GameState:
         return self._new_state
 
-    def to_json(self):
+    def to_json(self) -> dict:
         return {
             "dice": self._dice,
             "action": self._gm_role,
             "new_state": self._new_state.to_json()
         }
-    
-    def from_json(json):
+
+    @staticmethod
+    def from_json(data: dict) -> GameMasterResponse:
         return GameMasterResponse(
-            GameState.from_json(json["new_state"]),
-            json["dice"],
-            json["action"]
+            GameState.from_json(data["new_state"]),
+            data["dice"],
+            data["action"]
         )
 
     def dice(self) -> int:

@@ -1,5 +1,4 @@
 import streamlit as st
-import json
 
 from data.data_service import DataService
 from widgets.menu import menu
