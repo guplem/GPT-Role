@@ -3,6 +3,7 @@ import random
 from typing import Optional
 from io import StringIO
 import json
+import streamlit as st
 
 from dotenv import load_dotenv
 
@@ -23,11 +24,17 @@ class DataService(metaclass=Singleton):
         load_dotenv()
         self.__API_KEY = os.getenv("OPENAI_API_KEY")
 
-    def api_key(self) -> Optional[str]:
-        return self.__API_KEY
+    # noinspection PyMethodParameters
+    @st.cache_data
+    def api_key(_self) -> Optional[str]:
+        print('Returning non-cached API-KEY value and caching it.')
+        return DataService().__API_KEY
 
-    def set_api_key(self, key:str) -> None:
+    def set_api_key(self, key:Optional[str]) -> None:
+        self.api_key.clear()
         self.__API_KEY = key
+
+    # Clear all cached entries for this function.
 
     def save_game_master_response(self, response:GameMasterResponse, player_action:Optional[str]) -> None:
         self.__gameStarted = True
