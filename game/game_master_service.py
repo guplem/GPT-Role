@@ -74,8 +74,7 @@ class GameMasterService(metaclass=Singleton):
 
     def call_llm(self, prompt: str, history: [Turn]) -> (str, Optional[int], str):
         summary = ("[\n".join([summary.to_json_string() +",\n" for summary in history])) + "]"
-        # This is effectively telling ChatGPT what we're going to use its JSON output for.
-        # The request to the ChatGPT API.
+        # This is effectively telling ChatGPT what we're going to use its JSON output for the request to the ChatGPT API
         function_chosen = self.client.chat.completions.create(
             model=model_llm,
             messages=[

@@ -6,8 +6,11 @@ class GameMasterPrompt:
         The game master must accept the player decisions.
         There must be always an objective to be achieved by the player.
         All messages from the game master must be clear and concise.
-        Never exceed 4 sentences.
+        Violence is always possible and allowed.
+        Never exceed 3 sentences.
     """
+
+# ****** ACTIONS ******
 
     CONFLICT = """
         Players try to perform an action. Some kind of actions can be explore, combat, try to influence an NPC, look for clues or secrets, etc.
@@ -31,7 +34,7 @@ class GameMasterPrompt:
     """
 
     IMPOSSIBLE_ACTION = """
-        Player tries to perform an action that is impossible to accomplish based on physics, game rules and the current situation.
+        Player tries to perform an action that is impossible to accomplish based on physics and objects they have around.
         Consider if the action requires an object that the player does not have, if the action is not possible in the current location, if the action is not possible in the current situation, etc.
     """
 
@@ -46,6 +49,8 @@ class GameMasterPrompt:
         - Checks and Saves: Players roll dice to perform checks (e.g., skill checks, attack rolls) against a target number (difficulty class, DC). Saving throws are used to avoid or mitigate harm.
         - Modifiers: Dice rolls are often modified by character attributes and skills. For example, a high strength score might add a bonus to a melee attack roll.
     """
+
+# ****** ROLES ******
 
     DECIDE_ACTION_BOT_ROLE = """
         This is a dice based role game you have to decide what action should be taken. The game master in responsible to creat the world, make sure the players play by the rules and manage the game narrative and NPCs.
@@ -81,7 +86,8 @@ class GameMasterPrompt:
 
     GAME_MASTER_TRIVIAL_ACTION_ROLE = """
         This is a role game and you are the game master. The game master in responsible to explain the result of the action to the player.
-        The action is trivial and the player has the necessary skills and tools to perform the action without problems. Allways succeed.
+        The action is trivial and the player has the necessary skills and tools to perform the action without problems.
+        Allways succeed.
         Respond to the action with a short description of the result of the action and ask the user what he wants to do next.
     """
 
@@ -101,11 +107,7 @@ class GameMasterPrompt:
         Never create new player actions.
     """
 
-    # @staticmethod
-    # def character_definition(character_definition: str | None) -> str:
-    #     if character_definition is None:
-    #         return ""
-    #     return f"Playable character that will appear in this game are defined as: {character_definition}"
+# ****** HELPERS ******
 
     @staticmethod
     def objectives(objectives: str | None) -> str:
@@ -128,10 +130,4 @@ class GameMasterPrompt:
     @staticmethod
     def additional_info(info) -> str:
         return f"Additional information: {info}"
-    
-    # @staticmethod
-    # def relevant_characters(characters) -> str:
-    #     if characters is None:
-    #         return ""
-    #     characters = "\n".join([f"- Character name: {character.name}\n- Character description: {character.description}\n- Character items: {character.inventory}" for character in characters])
-    #     return f"The story characters that are found on the current location are: {characters}"
+
