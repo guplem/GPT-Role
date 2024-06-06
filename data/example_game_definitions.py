@@ -3,7 +3,7 @@ from models.game_definition import GameDefinition
 example_game_definitions: [GameDefinition] = [
     GameDefinition(
         "Neanderthal hunter named Grok",
-        "2021",
+        "40,000 BCE",
         "Prehistoric Survival",
         "Survive and establish a thriving tribe",
         "Face the elements and wild animals while discovering fire and basic tools"
@@ -189,5 +189,103 @@ example_game_definitions: [GameDefinition] = [
         "Temporal Exploration",
         "Witness key events and preserve the timeline",
         "Interact with historical figures, prevent paradoxes, and explore alternate realities"
+    ),
+    GameDefinition(
+        "Modern journalist named Nova",
+        "2020",
+        "Investigative Reporting",
+        "Expose corruption and uncover the truth",
+        "Interview sources, follow leads, and publish groundbreaking stories"
+    ),
+    GameDefinition(
+        "Fantasy merchant named Silk",
+        "1300",
+        "Trade Empire",
+        "Establish trade routes and dominate markets",
+        "Negotiate deals, manage caravans, and outmaneuver rival merchants"
+    ),
+    GameDefinition(
+        "Modern astronaut named Luna",
+        "2030",
+        "Space Exploration",
+        "Journey to the stars and discover new worlds",
+        "Pilot spacecraft, conduct experiments, and search for alien life"
+    ),
+    GameDefinition(
+        "Cybersecurity specialist named Cipher",
+        "2040",
+        "Digital Defense",
+        "Protect networks from cyber threats",
+        "Investigate breaches, develop security protocols, and outsmart hackers"
+    ),
+    GameDefinition(
+        "Fantasy ranger named Thorn",
+        "1500",
+        "Wilderness Survival",
+        "Navigate untamed lands and protect nature",
+        "Track elusive creatures, forage for resources, and defend the forest"
+    ),
+    GameDefinition(
+        "Modern therapist named Serenity",
+        "2020",
+        "Mental Health",
+        "Guide clients through personal challenges",
+        "Offer counseling, develop treatment plans, and promote emotional well-being"
+    ),
+    GameDefinition(
+        "Steampunk detective named Clockwork",
+        "1890",
+        "Victorian Mystery",
+        "Solve puzzling cases and outwit criminals",
+        "Analyze evidence, interrogate suspects, and unravel intricate plots"
+    ),
+    GameDefinition(
+        "Modern teacher named Sage",
+        "2020",
+        "Educational Adventure",
+        "Inspire students and foster learning",
+        "Design lesson plans, engage in field trips, and mentor young minds"
+    ),
+    GameDefinition(
+        "Fantasy alchemist named Althea",
+        "1300",
+        "Magical Alchemy",
+        "Transmute elements and unlock arcane secrets",
+        "Brew potions, craft magical items, and decipher ancient texts"
+    ),
+    GameDefinition(
+        "Modern detective named Phoenix",
+        "2020",
+        "Crime Scene Investigation",
+        "Analyze evidence and solve complex crimes",
+        "Collect forensic samples, interview witnesses, and reconstruct crime scenes"
+    ),
+    GameDefinition(
+        "Space archaeologist named Orion",
+        "2500",
+        "Extraterrestrial Artifacts",
+        "Uncover alien relics and decipher ancient technology",
+        "Explore alien ruins, decode alien languages, and unlock cosmic mysteries"
+    ),
+    GameDefinition(
+        "Modern explorer named Atlas",
+        "2020",
+        "Global Adventure",
+        "Travel the world and document exotic locales",
+        "Discover hidden wonders, interact with diverse cultures, and overcome challenges"
+    ),
+    GameDefinition(
+        "Fantasy druid named Willow",
+        "1400",
+        "Nature Magic",
+        "Protect the balance of nature and commune with spirits",
+        "Channel elemental powers, heal the land, and confront dark forces"
+    ),
+    GameDefinition(
+        "Modern engineer named Tesla",
+        "2020",
+        "Technological Innovation",
+        "Invent cutting-edge devices and revolutionize industry",
+        "Design prototypes, secure patents, and launch startups"
     ),
 ]
