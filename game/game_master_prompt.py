@@ -131,3 +131,7 @@ class GameMasterPrompt:
     def additional_info(info) -> str:
         return f"Additional information: {info}"
 
+    @staticmethod
+    def language(language: str) -> str:
+        return f'IMPORTANT: The Game Master must always respond in "{language}".'
+

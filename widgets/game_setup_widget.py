@@ -38,6 +38,7 @@ def game_setup():
     with col3:
         st.button("Clear", on_click= clear)
 
+    st.text_input("Language", key="language", value="English")
     st.text_area("Character Definition", key="characterDefinition", placeholder=DataService().game_definition_suggestion().character_definition())
     st.text_input("Year", key="year", placeholder=DataService().game_definition_suggestion().year())
     st.text_input("Theme", key="theme", placeholder=DataService().game_definition_suggestion().theme())
@@ -45,7 +46,7 @@ def game_setup():
     st.text_area("Additional Info", key="additionalInfo", placeholder=DataService().game_definition_suggestion().additional_info())
 
     def on_submit():
-        GameManager().start_game(GameDefinition(st.session_state["characterDefinition"], st.session_state["year"], st.session_state["theme"], st.session_state["objective"], st.session_state["additionalInfo"]))
+        GameManager().start_game(GameDefinition(st.session_state["characterDefinition"], st.session_state["year"], st.session_state["theme"], st.session_state["objective"], st.session_state["additionalInfo"], st.session_state["language"]))
 
     st.button("Start Game", on_click= on_submit)
 

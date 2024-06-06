@@ -86,6 +86,7 @@ class GameMasterService(metaclass=Singleton):
                         f"{GameMasterPrompt.year(self.game_definition.year())}"
                         f"{GameMasterPrompt.objectives(self.game_definition.objectives())}"
                         f"{GameMasterPrompt.additional_info(self.game_definition.additional_info())}"
+                        f"{GameMasterPrompt.language(self.game_definition.language())}"
                         f"In this world, the things that have happened before are: " + summary
                 },
                 {"role": "user", "content": f"{prompt}"}
@@ -109,6 +110,7 @@ class GameMasterService(metaclass=Singleton):
                     f"{GameMasterPrompt.BASE_PROMPT}"
                     f"{GameMasterPrompt.GAME_MASTER_CONFLICT_ROLE}"
                     f"{GameMasterPrompt.GAME_MECHANICS}"
+                    f"{GameMasterPrompt.language(self.game_definition.language())}"
              },
             {"role": "assistant",
              "content": f"In this world, the things that have happened before are:\n{summary}"},
@@ -128,6 +130,7 @@ class GameMasterService(metaclass=Singleton):
                 "content":
                     f"{GameMasterPrompt.BASE_PROMPT}"
                     f"{GameMasterPrompt.TRIVIAL_ACTION} "
+                    f"{GameMasterPrompt.language(self.game_definition.language())}"
              },
             {"role": "assistant",
              "content": f"In this world, the things that have happened before are:\n{summary}"},
@@ -148,6 +151,7 @@ class GameMasterService(metaclass=Singleton):
                 "content":
                     f"{GameMasterPrompt.BASE_PROMPT}"
                     f"{GameMasterPrompt.GAME_MASTER_ROLE_PLAYING_ROLE}"
+                    f"{GameMasterPrompt.language(self.game_definition.language())}"
              },
             {"role": "assistant",
              "content": f"In this world, the things that have happened before are:\n{summary}"},
@@ -168,6 +172,7 @@ class GameMasterService(metaclass=Singleton):
                 "content":
                     f"{GameMasterPrompt.BASE_PROMPT}"
                     f"{GameMasterPrompt.GAME_MASTER_STORY_TELLING_ROLE}"
+                    f"{GameMasterPrompt.language(self.game_definition.language())}"
             },
             {"role": "assistant",
              "content": f"In this world, the things that have happened before are:\n{summary}"},
@@ -191,6 +196,7 @@ class GameMasterService(metaclass=Singleton):
                     f"{GameMasterPrompt.year(self.game_definition.year())}"
                     f"{GameMasterPrompt.objectives(self.game_definition.objectives())}"
                     f"{GameMasterPrompt.additional_info(self.game_definition.additional_info())}"
+                    f"{GameMasterPrompt.language(self.game_definition.language())}"
             },
         ]
         response = self.client.chat.completions.create(
@@ -208,7 +214,7 @@ class GameMasterService(metaclass=Singleton):
                 "content":
                     f"{GameMasterPrompt.GAME_MASTER_GAME_QUESTION_ROLE}"
                     f"{GameMasterPrompt.GAME_MECHANICS}"
-                    # f"{GameMasterPrompt.relevant_characters(self.game_definition.relevant_characters())}."
+                    f"{GameMasterPrompt.language(self.game_definition.language())}"
              },
             {"role": "assistant",
              "content": f"In this world, the things that have happened before are:\n{summary}"},
@@ -227,7 +233,7 @@ class GameMasterService(metaclass=Singleton):
                 "role": "system",
                 "content":
                     f"{GameMasterPrompt.GAME_MASTER_IMPOSSIBLE_ACTION_ROLE}"
-                    # f"{GameMasterPrompt.relevant_characters(self.game_definition.relevant_characters())}."
+                    f"{GameMasterPrompt.language(self.game_definition.language())}"
              },
             {"role": "assistant",
              "content": f"In this world, the things that have happened before are:\n{summary}"},
@@ -248,7 +254,7 @@ class GameMasterService(metaclass=Singleton):
                     f"{GameMasterPrompt.BASE_PROMPT}"
                     f"{GameMasterPrompt.GAME_MASTER_CONFLICT_ARISE_ROLE}"
                     f"{GameMasterPrompt.GAME_MECHANICS}"
-                # f"{GameMasterPrompt.relevant_characters(self.game_definition.relevant_characters())}."
+                    f"{GameMasterPrompt.language(self.game_definition.language())}"
             },
             {"role": "assistant",
              "content": f"In this world, the things that have happened before are:\n{summary}"},
