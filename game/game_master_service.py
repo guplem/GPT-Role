@@ -1,9 +1,7 @@
 import random
 from typing import Optional
-
 from openai import OpenAI
 from openai.types.chat import ChatCompletion
-
 from data.data_service import DataService
 from game.game_master_prompt import GameMasterPrompt
 from models.game_definition import GameDefinition
@@ -11,11 +9,6 @@ from models.game_master_response import GameMasterResponse
 from models.state import GameState
 from models.turn import Turn
 from utils.singleton import Singleton
-
-model_llm = "gpt-3.5-turbo"
-model_image = "dall-e-3"
-
-
 
 class GameMasterService(metaclass=Singleton):
     TOOLS = [
@@ -76,7 +69,7 @@ class GameMasterService(metaclass=Singleton):
         summary = ("[\n".join([summary.to_json_string() +",\n" for summary in history])) + "]"
         # This is effectively telling ChatGPT what we're going to use its JSON output for the request to the ChatGPT API
         function_chosen = self.client.chat.completions.create(
-            model=model_llm,
+            model=DataService().llm_model(),
             messages=[
                 {
                     "role": "system",
@@ -117,7 +110,7 @@ class GameMasterService(metaclass=Singleton):
             {"role": "user",
              "content": f"{prompt}\nI rolled a d20 dice and I got this number: {dice}"}]
         response = self.client.chat.completions.create(
-            model=model_llm,
+            model=DataService().llm_model(),
             messages=messages,
         )
         return response, dice
@@ -137,7 +130,7 @@ class GameMasterService(metaclass=Singleton):
             {"role": "user",
              "content": f"{prompt}"}]
         response = self.client.chat.completions.create(
-            model=model_llm,
+            model=DataService().llm_model(),
             messages=messages,
         )
         return response, None
@@ -158,7 +151,7 @@ class GameMasterService(metaclass=Singleton):
             {"role": "user",
              "content": f"{prompt}"}]
         response = self.client.chat.completions.create(
-            model=model_llm,
+            model=DataService().llm_model(),
             messages=messages,
         )
         return response, None
@@ -179,7 +172,7 @@ class GameMasterService(metaclass=Singleton):
             {"role": "user",
              "content": f"{prompt}"}]
         response = self.client.chat.completions.create(
-            model=model_llm,
+            model=DataService().llm_model(),
             messages=messages,
         )
         return response, None
@@ -200,7 +193,7 @@ class GameMasterService(metaclass=Singleton):
             },
         ]
         response = self.client.chat.completions.create(
-            model=model_llm,
+            model=DataService().llm_model(),
             messages=messages,
         )
 
@@ -221,7 +214,7 @@ class GameMasterService(metaclass=Singleton):
             {"role": "user",
              "content": f"{prompt}"}]
         response = self.client.chat.completions.create(
-            model=model_llm,
+            model=DataService().llm_model(),
             messages=messages,
         )
         return response, None
@@ -240,7 +233,7 @@ class GameMasterService(metaclass=Singleton):
             {"role": "user",
              "content": f"{prompt}"}]
         response = self.client.chat.completions.create(
-            model=model_llm,
+            model=DataService().llm_model(),
             messages=messages,
         )
         return response, None
@@ -261,19 +254,7 @@ class GameMasterService(metaclass=Singleton):
             {"role": "user",
              "content": f"{prompt}"}]
         response = self.client.chat.completions.create(
-            model=model_llm,
+            model=DataService().llm_model(),
             messages=messages,
         )
         return response, None
-    
-    def generate_image(self, prompt:str):
-        response = self.client.images.generate(
-            model=model_image,
-            prompt=prompt,
-            size="1024x1024",
-            quality="standard",
-            n=1,
-        )
-
-        return response.data[0].url
-# Path: models/game_master_response.py

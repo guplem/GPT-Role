@@ -23,6 +23,7 @@ class DataService(metaclass=Singleton):
         self.__history:[Turn] = []
         load_dotenv()
         self.__API_KEY = os.getenv("OPENAI_API_KEY")
+        self.__llm_model = "gpt-3.5-turbo"
 
     # noinspection PyMethodParameters
     @st.cache_data
@@ -34,13 +35,20 @@ class DataService(metaclass=Singleton):
         self.api_key.clear()
         self.__API_KEY = key
 
-    # Clear all cached entries for this function.
+    # noinspection PyMethodParameters
+    @st.cache_data
+    def llm_model(_self) -> str:
+        print('Returning non-cached LLM model value and caching it.')
+        return DataService().__llm_model
+
+    def set_llm_model(self, key:str) -> None:
+        self.llm_model.clear()
+        self.__llm_model = key
 
     def save_game_master_response(self, response:GameMasterResponse, player_action:Optional[str]) -> None:
         self.__gameStarted = True
         self.__last_response = response
         self.__save_history(player_action, response.new_state().narrative())
-
 
     def __save_history(self, action:Optional[str], summary:str) -> None:
         turn = Turn(action, summary)
