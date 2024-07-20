@@ -14,78 +14,75 @@ from models.state import GameState
 from models.turn import Turn
 from utils.singleton import Singleton
 
+
+# noinspection PyMethodMayBeStatic
 class DataService(metaclass=Singleton):
 
     def __init__(self):
-        self.__gameDefinition:Optional[GameDefinition] = None
-        self.__gameStarted:bool = False
-        self.__last_response:GameMasterResponse = GameMasterResponse(GameState("Welcome to the game"))
-        self.__history:[Turn] = []
+        st.session_state.gameDefinition = None
+        st.session_state.gameStarted = False
+        st.session_state.last_response = GameMasterResponse(GameState("Welcome to the game"))
+        st.session_state.history = []
+        st.session_state.game_definition_suggestion = random.choice(example_game_definitions)
         load_dotenv()
         st.session_state.key = os.getenv("OPENAI_API_KEY")
         st.session_state.llm_model = "gpt-4o-mini"
 
-    # noinspection PyMethodMayBeStatic
     def get_api_key(self) -> Optional[str]:
         return st.session_state.key
 
-    # noinspection PyMethodMayBeStatic
     def set_api_key(self, value:Optional[str]) -> None:
         st.session_state.key = value
 
-    # noinspection PyMethodMayBeStatic
     def get_llm_model(self) -> str:
         return st.session_state.llm_model
 
-    # noinspection PyMethodMayBeStatic
     def set_llm_model(self, value:str) -> None:
         st.session_state.llm_model = value
 
     def save_game_master_response(self, response:GameMasterResponse, player_action:Optional[str]) -> None:
-        self.__gameStarted = True
-        self.__last_response = response
+        st.session_state.gameStarted = True
+        st.session_state.last_response = response
         self.__save_history(player_action, response.new_state().narrative())
 
     def __save_history(self, action:Optional[str], summary:str) -> None:
         turn = Turn(action, summary)
-        self.__history.append(turn)
+        st.session_state.history.append(turn)
 
     def history(self) -> [Turn]:
-        return self.__history
+        return st.session_state.history
 
     def last_response(self) -> GameMasterResponse:
-        return self.__last_response
+        return st.session_state.last_response
 
     def game_definition(self) -> Optional[GameDefinition]:
-        return self.__gameDefinition
+        return st.session_state.gameDefinition
 
     def game_started(self) -> bool:
-        return self.__gameStarted
-
-    __game_definition_suggestion: GameDefinition = random.choice(example_game_definitions)
+        return st.session_state.gameStarted
 
     def change_game_definition_suggestion(self) -> None:
-        self.__game_definition_suggestion = random.choice(example_game_definitions)
+        st.session_state.game_definition_suggestion = random.choice(example_game_definitions)
 
     def game_definition_suggestion(self) -> GameDefinition:
-        return self.__game_definition_suggestion
+        return st.session_state.game_definition_suggestion
 
     def reset_game(self) -> None:
-        self.__gameDefinition = None
-        self.__gameStarted = False
-        self.__last_response = GameMasterResponse(GameState("Welcome to the game"))
-        self.__history = []
+        st.session_state.gameDefinition = None
+        st.session_state.gameStarted = False
+        st.session_state.last_response = GameMasterResponse(GameState("Welcome to the game"))
+        st.session_state.history = []
 
     def start_game(self, game_definition) -> None:
-        self.__gameDefinition = game_definition
-        self.__gameStarted = True
+        st.session_state.gameDefinition = game_definition
+        st.session_state.gameStarted = True
 
     def save_game(self) -> str:
         game_data = {
-            "game_definition": self.__gameDefinition.to_json(),
-            "game_started": self.__gameStarted,
-            "last_response": self.__last_response.to_json(),
-            "history": [history.to_json() for history in self.__history]
+            "game_definition": st.session_state.gameDefinition.to_json(),
+            "game_started": st.session_state.gameStarted,
+            "last_response": st.session_state.last_response.to_json(),
+            "history": [history.to_json() for history in st.session_state.history]
         }
         return json.dumps(game_data)
     
@@ -94,7 +91,7 @@ class DataService(metaclass=Singleton):
         # To read file as string:
         string_data = stringio.read()
         game_data = json.loads(string_data)
-        self.__gameDefinition = GameDefinition.from_json(game_data["game_definition"])
-        self.__gameStarted = game_data["game_started"]
-        self.__last_response = GameMasterResponse.from_json(game_data["last_response"])
-        self.__history = [Turn.from_json(turn) for turn in game_data["history"]]
+        st.session_state.gameDefinition = GameDefinition.from_json(game_data["game_definition"])
+        st.session_state.gameStarted = game_data["game_started"]
+        st.session_state.last_response = GameMasterResponse.from_json(game_data["last_response"])
+        st.session_state.history = [Turn.from_json(turn) for turn in game_data["history"]]

@@ -53,7 +53,7 @@ else:
         with left_co:
             st.download_button(
                 label="Save Game",
-                file_name="GPT-Role_game.json",
+                file_name="GPT-Role " + DataService().game_definition().character_definition()+ ".json",
                 mime="application/json",
                 data=DataService().save_game()
             )
