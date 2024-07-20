@@ -25,21 +25,19 @@ class DataService(metaclass=Singleton):
         st.session_state.key = os.getenv("OPENAI_API_KEY")
         st.session_state.llm_model = "gpt-4o-mini"
 
-    # noinspection PyMethodParameters
-    @staticmethod
-    def api_key() -> Optional[str]:
+    # noinspection PyMethodMayBeStatic
+    def get_api_key(self) -> Optional[str]:
         return st.session_state.key
 
-    @staticmethod
+    # noinspection PyMethodMayBeStatic
     def set_api_key(self, value:Optional[str]) -> None:
         st.session_state.key = value
 
-    @staticmethod
-    # noinspection PyMethodParameters
-    def llm_model(_self) -> str:
+    # noinspection PyMethodMayBeStatic
+    def get_llm_model(self) -> str:
         return st.session_state.llm_model
 
-    @staticmethod
+    # noinspection PyMethodMayBeStatic
     def set_llm_model(self, value:str) -> None:
         st.session_state.llm_model = value
 

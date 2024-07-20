@@ -54,7 +54,7 @@ class GameMasterService(metaclass=Singleton):
     _instance = None
 
     def start_game(self, game_definition: GameDefinition) -> GameMasterResponse:
-        self.client = OpenAI(api_key=DataService().api_key())
+        self.client = OpenAI(api_key=DataService().get_api_key())
         self.game_definition = game_definition
         initial_context = self.__initialize_game_context()
         return GameMasterResponse(GameState(initial_context))
@@ -69,7 +69,7 @@ class GameMasterService(metaclass=Singleton):
         summary = ("[\n".join([summary.to_json_string() +",\n" for summary in history])) + "]"
         # This is effectively telling ChatGPT what we're going to use its JSON output for the request to the ChatGPT API
         function_chosen = self.client.chat.completions.create(
-            model=DataService().llm_model(),
+            model=DataService().get_llm_model(),
             messages=[
                 {
                     "role": "system",
@@ -110,7 +110,7 @@ class GameMasterService(metaclass=Singleton):
             {"role": "user",
              "content": f"{prompt}\nI rolled a d20 dice and I got this number: {dice}"}]
         response = self.client.chat.completions.create(
-            model=DataService().llm_model(),
+            model=DataService().get_llm_model(),
             messages=messages,
         )
         return response, dice
@@ -130,7 +130,7 @@ class GameMasterService(metaclass=Singleton):
             {"role": "user",
              "content": f"{prompt}"}]
         response = self.client.chat.completions.create(
-            model=DataService().llm_model(),
+            model=DataService().get_llm_model(),
             messages=messages,
         )
         return response, None
@@ -151,7 +151,7 @@ class GameMasterService(metaclass=Singleton):
             {"role": "user",
              "content": f"{prompt}"}]
         response = self.client.chat.completions.create(
-            model=DataService().llm_model(),
+            model=DataService().get_llm_model(),
             messages=messages,
         )
         return response, None
@@ -172,7 +172,7 @@ class GameMasterService(metaclass=Singleton):
             {"role": "user",
              "content": f"{prompt}"}]
         response = self.client.chat.completions.create(
-            model=DataService().llm_model(),
+            model=DataService().get_llm_model(),
             messages=messages,
         )
         return response, None
@@ -193,7 +193,7 @@ class GameMasterService(metaclass=Singleton):
             },
         ]
         response = self.client.chat.completions.create(
-            model=DataService().llm_model(),
+            model=DataService().get_llm_model(),
             messages=messages,
         )
 
@@ -214,7 +214,7 @@ class GameMasterService(metaclass=Singleton):
             {"role": "user",
              "content": f"{prompt}"}]
         response = self.client.chat.completions.create(
-            model=DataService().llm_model(),
+            model=DataService().get_llm_model(),
             messages=messages,
         )
         return response, None
@@ -233,7 +233,7 @@ class GameMasterService(metaclass=Singleton):
             {"role": "user",
              "content": f"{prompt}"}]
         response = self.client.chat.completions.create(
-            model=DataService().llm_model(),
+            model=DataService().get_llm_model(),
             messages=messages,
         )
         return response, None
@@ -254,7 +254,7 @@ class GameMasterService(metaclass=Singleton):
             {"role": "user",
              "content": f"{prompt}"}]
         response = self.client.chat.completions.create(
-            model=DataService().llm_model(),
+            model=DataService().get_llm_model(),
             messages=messages,
         )
         return response, None

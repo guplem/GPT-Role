@@ -21,7 +21,7 @@ st.set_page_config(
 )
 menu()
 
-key = DataService().api_key()
+key = DataService().get_api_key()
 
 if key is None or len(key) < 5:
     st.warning("Please provide an OpenAI API key to start the game.")
