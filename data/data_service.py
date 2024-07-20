@@ -22,28 +22,26 @@ class DataService(metaclass=Singleton):
         self.__last_response:GameMasterResponse = GameMasterResponse(GameState("Welcome to the game"))
         self.__history:[Turn] = []
         load_dotenv()
-        self.__API_KEY = os.getenv("OPENAI_API_KEY")
-        self.__llm_model = "gpt-4o-mini"
+        st.session_state.key = os.getenv("OPENAI_API_KEY")
+        st.session_state.llm_model = "gpt-4o-mini"
 
     # noinspection PyMethodParameters
-    @st.cache_data
-    def api_key(_self) -> Optional[str]:
-        print('Returning non-cached API-KEY value and caching it.')
-        return DataService().__API_KEY
+    @staticmethod
+    def api_key() -> Optional[str]:
+        return st.session_state.key
 
-    def set_api_key(self, key:Optional[str]) -> None:
-        self.api_key.clear()
-        self.__API_KEY = key
+    @staticmethod
+    def set_api_key(self, value:Optional[str]) -> None:
+        st.session_state.key = value
 
+    @staticmethod
     # noinspection PyMethodParameters
-    @st.cache_data
     def llm_model(_self) -> str:
-        print('Returning non-cached LLM model value and caching it.')
-        return DataService().__llm_model
+        return st.session_state.llm_model
 
-    def set_llm_model(self, key:str) -> None:
-        self.llm_model.clear()
-        self.__llm_model = key
+    @staticmethod
+    def set_llm_model(self, value:str) -> None:
+        st.session_state.llm_model = value
 
     def save_game_master_response(self, response:GameMasterResponse, player_action:Optional[str]) -> None:
         self.__gameStarted = True
