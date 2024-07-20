@@ -23,7 +23,7 @@ class DataService(metaclass=Singleton):
         self.__history:[Turn] = []
         load_dotenv()
         self.__API_KEY = os.getenv("OPENAI_API_KEY")
-        self.__llm_model = "gpt-3.5-turbo"
+        self.__llm_model = "gpt-4o-mini"
 
     # noinspection PyMethodParameters
     @st.cache_data

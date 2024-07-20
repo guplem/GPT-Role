@@ -44,7 +44,7 @@ def update_model():
     model = st.session_state.model
     DataService().set_llm_model(model)
 
-model_options = ["gpt-3.5-turbo", "gpt-4", "gpt-4-turbo", "gpt-4o"];
+model_options = ["gpt-4o-mini", "gpt-3.5-turbo", "gpt-4", "gpt-4-turbo", "gpt-4o"]
 
 st.selectbox(
     "What OpenAI model do you want to use?",
