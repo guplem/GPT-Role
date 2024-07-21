@@ -1,4 +1,5 @@
 # GPT-Role
+Welcome to GPT-Role, a game where you and an AI will create a story together.
 
 ## Public access
 - A demo of the project can be found [here](https://gpt-role.streamlit.app/).
