@@ -1,6 +1,9 @@
 # GPT-Role
 
-## Instructions
+## Public access
+- A demo of the project can be found [here](https://gpt-role.streamlit.app/).
+
+## Development Instructions
 
 ### Prerequisites
 - Ensure **Docker** is installed and running.
